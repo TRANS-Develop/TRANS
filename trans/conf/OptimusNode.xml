@@ -1,0 +1,20 @@
+<Configuration>
+	<property>
+		<name>Optimus.data.port</name>
+		<value>8001</value>
+	</property>
+	<property>
+		<name>Optimus.data.path</name>
+		<value>./data</value>
+	</property>
+
+	<property>
+		<name>Optimus.rmanager.port</name>
+		<value>8003</value>
+	</property>
+	<property>
+		<name>Optimus.datnode.thread</name>
+		<value>10</value>
+	</property>
+	
+</Configuration>

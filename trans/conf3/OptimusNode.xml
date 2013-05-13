@@ -1,0 +1,15 @@
+<Configuration>
+	<property>
+		<name>Optimus.data.port</name>
+		<value>8007</value>
+	</property>
+	<property>
+		<name>Optimus.data.path</name>
+		<value>./data3</value>
+	</property>
+
+	<property>
+		<name>Optimus.rmanager.port</name>
+		<value>8006</value>
+	</property>
+</Configuration>
