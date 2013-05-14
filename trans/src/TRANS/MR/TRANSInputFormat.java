@@ -23,10 +23,10 @@ import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Client.ZoneClient;
 import TRANS.Data.Optimus1Ddata;
+import TRANS.Data.OptimusData;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
 import TRANS.util.OptimusConfiguration;
-import TRANS.util.OptimusData;
 import TRANS.util.TransHostList;
 import TRANS.MR.*;
 

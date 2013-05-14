@@ -7,7 +7,7 @@ import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import TRANS.Array.PID;
-import TRANS.util.OptimusData;
+import TRANS.Data.OptimusData;
 
 public class TRANSNonPushInputFormat extends TRANSInputFormat<PID,OptimusData> {
 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import TRANS.Array.OptimusShape;
 import TRANS.Data.*;
 import TRANS.Exceptions.WrongArgumentException;
-import TRANS.util.OptimusData;
 
 public class InteratorTest {
 

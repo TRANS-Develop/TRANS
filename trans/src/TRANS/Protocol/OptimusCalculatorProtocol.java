@@ -11,7 +11,7 @@ import TRANS.Array.PID;
 import TRANS.Array.Partition;
 import TRANS.Calculator.OptimusCalculator;
 import TRANS.Data.Optimus1Ddata;
-import TRANS.util.OptimusData;
+import TRANS.Data.OptimusData;
 
 public interface OptimusCalculatorProtocol extends VersionedProtocol {
 	static public long versionID = 1; 

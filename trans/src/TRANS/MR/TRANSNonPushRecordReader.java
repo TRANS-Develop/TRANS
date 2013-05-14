@@ -6,7 +6,7 @@ import java.util.Arrays;
 import TRANS.Array.OptimusArray;
 import TRANS.Array.OptimusZone;
 import TRANS.Array.PID;
-import TRANS.util.OptimusData;
+import TRANS.Data.OptimusData;
 
 public class TRANSNonPushRecordReader extends TRANSRecordReader<PID, OptimusData> {
 

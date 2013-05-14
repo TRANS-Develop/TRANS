@@ -2,7 +2,6 @@ package TRANS.Data;
 
 import TRANS.Array.OptimusShape;
 import TRANS.Exceptions.WrongArgumentException;
-import TRANS.util.OptimusData;
 
 public class OptimusInterator {
 

@@ -7,8 +7,8 @@ import org.apache.hadoop.mapred.Counters.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
+import TRANS.Data.OptimusData;
 import TRANS.MR.io.AverageResult;
-import TRANS.util.OptimusData;
 
 public class AveragePushDownMapper extends Mapper<Object, AverageResult, LongWritable, AverageResult> {
 		 

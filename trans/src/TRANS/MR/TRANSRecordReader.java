@@ -16,11 +16,11 @@ import TRANS.Array.OptimusZone;
 import TRANS.Array.PID;
 import TRANS.Client.Reader.PartitionReader;
 import TRANS.Data.Optimus1Ddata;
+import TRANS.Data.OptimusData;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusDataProtocol;
 import TRANS.util.Host;
 import TRANS.util.OptimusConfiguration;
-import TRANS.util.OptimusData;
 import TRANS.util.TransHostList;
 
 public abstract class TRANSRecordReader<K,V> extends RecordReader<K,V> {

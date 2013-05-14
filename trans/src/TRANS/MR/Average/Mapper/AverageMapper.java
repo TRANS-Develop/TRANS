@@ -8,8 +8,8 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import TRANS.Data.Optimus1Ddata;
+import TRANS.Data.OptimusData;
 import TRANS.MR.io.AverageResult;
-import TRANS.util.OptimusData;
 
 /**
  * Mapper for the Average operator

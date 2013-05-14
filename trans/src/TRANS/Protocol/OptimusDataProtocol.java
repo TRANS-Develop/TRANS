@@ -12,11 +12,11 @@ import TRANS.Array.OptimusShape;
 import TRANS.Array.PID;
 import TRANS.Array.Partition;
 import TRANS.Array.RID;
+import TRANS.Data.OptimusData;
 import TRANS.MR.Average.AverageResultArrayWritable;
 import TRANS.MR.Median.MedianResultArrayWritable;
 import TRANS.MR.io.AverageResult;
 import TRANS.util.Host;
-import TRANS.util.OptimusData;
 import TRANS.util.TRANSDataIterator;
 
 public interface OptimusDataProtocol extends VersionedProtocol {
