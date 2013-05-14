@@ -37,7 +37,7 @@ public class MedianReducer extends 	Reducer<IntWritable, StripeMedianResult, Int
 	private int []parshape = null;
 	private int []rangeOff = null;
 	private int []resultShape = null;
-	private double []result = null;
+	private Object []result = null;
 	private int cur = 0;
 	
 	private String confDir=null;
@@ -104,7 +104,7 @@ public class MedianReducer extends 	Reducer<IntWritable, StripeMedianResult, Int
 			{
 				len *= s[i];
 			}
-			this.result = new double[len];
+			this.result = new Object[len];
 		}
 		Iterator<StripeMedianResult> it = values.iterator();
 		StripeMedianResult result = it.next();

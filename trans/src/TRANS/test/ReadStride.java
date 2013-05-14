@@ -40,7 +40,7 @@ public class ReadStride {
 		}
 		OptimusCatalogProtocol ci = zclient.getCi();
 		double []data = new double[8];
-		StripeMedianResult r = new StripeMedianResult(0,TestConst.srcStart,TestConst.vsize);
+		StripeMedianResult<Double> r = new StripeMedianResult<Double>(0,TestConst.srcStart,TestConst.vsize,Double.class);
 		OptimusArray array = ci.openArray(zone.getId(), new Text(arrayName));
 		int []rangeStart={1,1};
 		int []rangeOff={4,6};

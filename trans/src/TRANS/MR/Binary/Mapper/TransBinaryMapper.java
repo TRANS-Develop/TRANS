@@ -47,7 +47,7 @@ public class TransBinaryMapper
 	private Counter cl = null;
 	private Counter cr = null;
 	private Counter co = null;
-	private double [] colocatedRead(TransBinaryInputSplit split, Host h, OptimusZone zone1, 
+	private Object [] colocatedRead(TransBinaryInputSplit split, Host h, OptimusZone zone1, 
 			OptimusZone zone2,OptimusZone zone3)throws Exception
 	{
 		System.out.println("colocated Read");
@@ -112,8 +112,8 @@ public class TransBinaryMapper
 		}
 		String [] host = split.getLocations();
 		Host h = UTILS.RandomHost(host,split.getHosts().getHosts());
-		Double []data2 = null;
-		Double [] data1 = null;
+		Object []data2 = null;
+		Object [] data1 = null;
 		DataChunk chunk =  new DataChunk(zone3.getSize().getShape(), zone3.getPstep().getShape());
 		
 		
@@ -175,7 +175,7 @@ public class TransBinaryMapper
 				len *= noff[i];
 			}
 			
-			double []tmp = new double[len];	
+			Object []tmp = new Object[len];	
 			TRANSDataIterator itr = new TRANSDataIterator(tmp,nstart,noff);
 			
 			
