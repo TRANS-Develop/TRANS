@@ -33,7 +33,7 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 	private int []parshape = null;
 	private int []rangeOff = null;
 	private int []resultShape = null;
-	private double []result = null;
+	private Double []result = null;
 	private int cur = 0;
 	
 	private String confDir=null;
@@ -108,7 +108,7 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 			{
 				len *= s[i];
 			}
-			this.result = new double[len];
+			this.result = new Double[len];
 		}
 		Iterator<StrideAverageResult> it = values.iterator();
 		StrideAverageResult result = it.next();

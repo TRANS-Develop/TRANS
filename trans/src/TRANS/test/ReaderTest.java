@@ -24,8 +24,8 @@ public class ReaderTest {
 		PartitionReader reader = new PartitionReader(conf);
 		String zoneName = TestConst.testZoneName;
 		String arrayName = TestConst.testArrayName;
-		int [] start = {0,0,0};
-		int [] off = {8,8,8};
+		int [] start = {0,0,0,0};
+		int [] off = {8,8,8,8};
 		ZoneClient zclient = new ZoneClient(conf);
 		OptimusZone zone = zclient.openZone(zoneName);
 		System.out.println(zone.getId());
@@ -33,7 +33,7 @@ public class ReaderTest {
 		{
 			System.out.print("UnCreated zone or unknown error happened");
 		}
-		double [] data = reader.readData(zone,arrayName, start, off);
+		Object [] data = reader.readData(zone,arrayName, start, off);
 		for( int i = 0; i < data.length; i++)
 		{
 			System.out.print(data[i]+"\n");

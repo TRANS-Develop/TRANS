@@ -11,16 +11,20 @@ import java.util.Vector;
 
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
+import org.apache.hadoop.io.WritableComparable;
 
 import TRANS.Array.OptimusShape;
+import TRANS.Data.TransDataType;
+import TRANS.Data.Reader.Byte2DoubleReader;
+import TRANS.Data.Writer.OptimusDouble2ByteStreamWriter;
+import TRANS.Data.Writer.Interface.ByteWriter;
 import TRANS.MR.OptimusResultKey;
-import TRANS.util.Byte2DoubleReader;
-import TRANS.util.OptimusDouble2ByteStreamWriter;
 
-public class StripeMedianResult implements Writable {
+public class StripeMedianResult<T extends Comparable<T>> implements Writable {
 	public int[] getStart() {
 		return start;
 	}
@@ -38,10 +42,11 @@ public class StripeMedianResult implements Writable {
 	}
 	private int id=0;
 	
-	Vector<Double> data = new Vector<Double>();
+	Vector<T> data = new Vector<T>();
 	Set<OptimusResultKey> keys = new HashSet<OptimusResultKey>();
+	private TransDataType type = new TransDataType();
 	private int volume = 1;
-	private double result = 1;
+	private Object result = null;
 	private boolean full = false;
 	private int []start = null;
 	private int []stride = null;
@@ -57,7 +62,7 @@ public class StripeMedianResult implements Writable {
 		return isIntersect;
 	}
 	public StripeMedianResult(){}
-	public StripeMedianResult(int id,int []start, int []stride)
+	public StripeMedianResult(int id,int []start, int []stride,Class<?> type) throws IOException
 	{
 		this.id = id;
 		for(int i=0; i < stride.length; i++)
@@ -66,6 +71,7 @@ public class StripeMedianResult implements Writable {
 		}
 		this.start = start;
 		this.stride = stride;
+		this.type = new TransDataType(type);
 	}
 	public boolean isFull()
 	{
@@ -83,25 +89,25 @@ public class StripeMedianResult implements Writable {
 	{
 		return keys.contains(key);
 	}
-	public void add(double d)
+	public void add(T d)
 	{
 		data.add(d);
 	}
-	public void add(double []d)
+	public void add(T []d)
 	{
 		for(int i=0;i<d.length;i++)
 			data.add(d[i]);
 	}
 	public void add(StripeMedianResult r)
 	{
-		Vector<Double> data = r.getData();
+		Vector<T> data = (Vector<T>)r.getData();
 		if(data != null)
 			this.data.addAll(data);
 	}
-	public Vector<Double> getData() {
+	public Vector<T> getData() {
 		return data;
 	}
-	public void setData(Vector<Double> data) {
+	public void setData(Vector<T> data) {
 		this.data = data;
 	}
 	public Set<OptimusResultKey> getKeys() {
@@ -113,7 +119,7 @@ public class StripeMedianResult implements Writable {
 	@Override
 	public void write(DataOutput out) throws IOException {
 		// TODO Auto-generated method stub
-		
+		this.type.write(out);
 		WritableUtils.writeVInt(out, this.id);
 	
 		new OptimusShape(this.start).write(out);
@@ -121,17 +127,32 @@ public class StripeMedianResult implements Writable {
 		new BooleanWritable(full).write(out);
 		if(this.full)
 		{
+			T tmp = this.getResult();
+			Class<?>t = TransDataType.getClass(this.type);
+			if(t.equals(Double.class))
+			{
+				new DoubleWritable((Double)tmp).write(out);
+			}else if(t.equals(Float.class))
+			{
+				new FloatWritable((Float)tmp).write(out);
+			}else if(t.equals(Integer.class))
+			{
+				new IntWritable((Integer)tmp).write(out);
+			}else{
+				System.out.println("Unsupported type");
+			}
 			
-			new DoubleWritable(this.getResult()).write(out);
 		}else{
 			WritableUtils.writeVInt(out, volume);
 			
 			int len = this.data.size();
 			WritableUtils.writeVInt(out, len);
-			OptimusDouble2ByteStreamWriter writer = 
+			//TODO
+			ByteWriter writer = 
 					new OptimusDouble2ByteStreamWriter(this.data.size() * 8,out);
-			for(Double d:this.data)
-				writer.writeDouble(d);
+			
+			for(Object d: this.data)
+				writer.write(d);
 			if(len == 0)
 			{
 				System.out.println(this);
@@ -158,21 +179,22 @@ public class StripeMedianResult implements Writable {
 				+ ", stride=" + Arrays.toString(stride) + "]";
 	}
 
-	public double getResult()
+	public T getResult()
 	{
 		if(this.isFull()&&this.data == null)
 		{
-			return this.result;
+			return (T)this.result;
 		}else{
 			Collections.sort(this.data);
 			this.result = this.data.get(this.data.size()/2);
 			this.data = null;
 		}
-		return this.result;
+		return (T)this.result;
 	}
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		// TODO Auto-generated method stub
+		this.type.readFields(in);
 		this.id = WritableUtils.readVInt(in);
 		OptimusShape s = new OptimusShape();
 		s.readFields(in);
@@ -183,10 +205,26 @@ public class StripeMedianResult implements Writable {
 		this.full =b.get();
 		if(this.full)
 		{
-			DoubleWritable d = new DoubleWritable();
-			d.readFields(in);
-			this.result = d.get();
-			this.data = null;
+			;
+			Class<?>t = TransDataType.getClass(this.type);
+			if(t.equals(Double.class))
+			{
+				DoubleWritable d = new DoubleWritable();
+				d.readFields(in);
+				this.result = d.get();
+			}else if(t.equals(Float.class))
+			{
+				FloatWritable d = new FloatWritable();
+				d.readFields(in);
+				this.result = d.get();
+			}else if(t.equals(Integer.class))
+			{
+				IntWritable d = new IntWritable();
+				d.readFields(in);
+				this.result = d.get();
+			}else{
+				System.out.println("Unsupported type");
+			}
 		}else{
 		//	System.out.println(this.volume+":" + len);
 			this.volume = WritableUtils.readVInt(in);
@@ -196,9 +234,9 @@ public class StripeMedianResult implements Writable {
 			byte[] bdata = new byte[len*8];  
 			in.readFully(bdata);
 			reader.setData(bdata);
-			this.data = new Vector<Double>();
+			this.data = new Vector<T>();
 			if(len != 0)
-				this.add(reader.readData());
+				this.add((T[])reader.readData());
 		}
 		
 	}

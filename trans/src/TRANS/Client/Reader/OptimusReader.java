@@ -8,10 +8,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.hadoop.io.Text;
 import org.jdom2.JDOMException;
 
+import TRANS.Array.OptimusArray;
 import TRANS.Array.OptimusZone;
 import TRANS.Client.ZoneClient;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.util.OptimusConfiguration;
 
@@ -100,7 +103,17 @@ public class OptimusReader {
 			System.out.print("UnCreated zone or unknown error happened");
 			System.exit(-1);
 		}
-		double [] data = reader.readData(zone,arrayName, spoint, opoint);
+		OptimusArray array = zclient.getCi().openArray(zone.getId(), new Text(arrayName));
+		TransDataType t = array.getType();
+		
+		Object [] data = reader.readData(zone,arrayName, spoint, opoint);
+		
+		Class<?> tmpType = TransDataType.getClass(t);
+		if(tmpType.equals(Double.class))
+		{
+			
+		}
+		
 		if( cmd.hasOption("p"))
 		{
 			for(int i = 0 ; i < data.length; i++)

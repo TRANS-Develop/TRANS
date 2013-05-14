@@ -11,6 +11,8 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
 
 import TRANS.Array.OptimusShape;
+import TRANS.Data.Reader.Byte2DoubleReader;
+import TRANS.Data.Writer.OptimusDouble2ByteStreamWriter;
 
 public class TRANSDataIterator implements Writable{
 	@Override
@@ -63,7 +65,7 @@ public class TRANSDataIterator implements Writable{
 	}
 
 	//data to read
-	double []data = null;
+	Object []data = null;
 	//the description of the data
 	int [] start = null;
 	@Override
@@ -87,7 +89,7 @@ public class TRANSDataIterator implements Writable{
 	private int[] itr;
 	public TRANSDataIterator(){}
 	
-	public TRANSDataIterator(double []data, int []start, int []shape)
+	public TRANSDataIterator(Object []data, int []start, int []shape)
 	{
 		this.data = data;
 		this.shape = shape;
@@ -148,15 +150,15 @@ public class TRANSDataIterator implements Writable{
 		}
 		return true;
 	}
-	public double get()
+	public Object get()
 	{
 		return this.data[fpos+itr[itr.length - 1]];
 	}
-	public void set(double d)
+	public void set(Object d)
 	{
 		this.data[fpos+itr[itr.length - 1]] = d;
 	}
-	public void add(double d)
+	public void add(Object d)
 	{
 		this.size++;
 		this.data[fpos+itr[itr.length - 1]] = d;
@@ -170,7 +172,7 @@ public class TRANSDataIterator implements Writable{
 		new OptimusShape(this.shape).write(out);
 		OptimusDouble2ByteStreamWriter writer = 
 				new OptimusDouble2ByteStreamWriter(this.data.length * 8,out);
-		writer.writeDouble(this.data);
+		writer.write(this.data);
 		writer.close();
 		WritableUtils.writeVInt(out, this.size);
 		WritableUtils.writeVInt(out, this.volume);
@@ -199,23 +201,23 @@ public class TRANSDataIterator implements Writable{
 		byte[] bdata = new byte[len*8];  
 		in.readFully(bdata);
 		reader.setData(bdata);
-		this.data = reader.readData();
+		this.data = (Object [])reader.readData();
 		this.size = WritableUtils.readVInt(in);
 		this.volume = WritableUtils.readVInt(in);
 	}
 	
 	public static void main(String []args)
 	{
-		double []data = new double[9*5*4];
+		Double []data = new Double[9*5*4];
 		for(int i=0; i < data.length;i++)
 		{
-			data[i]=i+1;
+			data[i]=new Double(i+1);
 		}
 		int []start={0,0,0};
 		int []shape={9,5,4};
 		int [] rstart={0,0,0};
 		int [] roff={9,5,4};
-		double []rdata = new double[9*5*4];
+		Double []rdata = new Double[9*5*4];
 		TRANSDataIterator ritr = new TRANSDataIterator(data,start,shape);
 		TRANSDataIterator citr = new TRANSDataIterator(rdata,rstart,roff);
 		
@@ -231,11 +233,11 @@ public class TRANSDataIterator implements Writable{
 		
 	}
 
-	public double[] getData() {
+	public Object[] getData() {
 		return data;
 	}
 
-	public void setData(double[] data) {
+	public void setData(Object[] data) {
 		this.data = data;
 	}
 	public boolean isFull()

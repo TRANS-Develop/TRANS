@@ -112,8 +112,8 @@ public class TransBinaryMapper
 		}
 		String [] host = split.getLocations();
 		Host h = UTILS.RandomHost(host,split.getHosts().getHosts());
-		double []data2 = null;
-		double [] data1 = null;
+		Double []data2 = null;
+		Double [] data1 = null;
 		DataChunk chunk =  new DataChunk(zone3.getSize().getShape(), zone3.getPstep().getShape());
 		
 		
@@ -132,9 +132,9 @@ public class TransBinaryMapper
 				{
 					rstart1[i] = start1[i] - cstart1[i];
 				}
-				data1 = dp.readDouble(new ArrayID(split.getAid1()), new PID(split.getPnum1()),
+				data1 = (Double [])dp.readData(new ArrayID(split.getAid1()), new PID(split.getPnum1()),
 						new OptimusShape(split.getPs1()), new OptimusShape(rstart1), new OptimusShape(split.getRoff())).getData();
-				data2 = reader.readData(zone2, split.getAid2(), split.getStart2(), split.getOff());
+				data2 = (Double [])reader.readData(zone2, split.getAid2(), split.getStart2(), split.getOff());
 				//data1 = reader.readData(zone1, split.getAid1(), split.getStart1(), split.getOff());
 				cl.increment(data1.length );
 				cr.increment(data2.length);

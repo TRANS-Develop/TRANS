@@ -16,6 +16,7 @@ import TRANS.Array.OptimusZone;
 import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Array.ZoneID;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.util.Host;
 import TRANS.util.TRANSWritableArray;
@@ -34,7 +35,7 @@ public interface OptimusCatalogProtocol extends VersionedProtocol {
 	 public OptimusZone openZone(ZoneID id)throws WrongArgumentException;
 	 public BooleanWritable deleteZone(ZoneID id)throws WrongArgumentException;
 
-	 public ArrayID createArray(ZoneID id,Text name,FloatWritable devalue)throws TRANS.Exceptions.WrongArgumentException;
+	 public ArrayID createArray(ZoneID id,Text name,FloatWritable devalue,TransDataType type)throws TRANS.Exceptions.WrongArgumentException;
 	 public OptimusArray openArray(ZoneID id,Text name)throws TRANS.Exceptions.WrongArgumentException;
 	 public OptimusArray openArray(ArrayID aid)throws TRANS.Exceptions.WrongArgumentException;
 	 

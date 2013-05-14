@@ -7,11 +7,11 @@ import TRANS.Array.OptimusShape;
 import TRANS.Array.OptimusZone;
 import TRANS.Array.Partition;
 import TRANS.Array.RID;
+import TRANS.Data.Writer.OptimusDouble2ByteStreamWriter;
+import TRANS.Data.Writer.Interface.ByteWriter;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
-import TRANS.util.ByteWriter;
 import TRANS.util.Host;
-import TRANS.util.OptimusDouble2ByteStreamWriter;
 
 public class PartitionStreamCreater extends PartitionCreater {
 

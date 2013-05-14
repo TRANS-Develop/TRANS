@@ -16,11 +16,15 @@ import org.apache.hadoop.io.Writable;
 
 import TRANS.OptimusNode;
 import TRANS.OptimusReplicationManager;
+import TRANS.Data.TransDataType;
+import TRANS.Data.Reader.Byte2DoubleReader;
+import TRANS.Data.Reader.ByteReader;
+import TRANS.Data.Reader.TransByteReaderFactory;
+import TRANS.Data.Writer.OptimusDouble2ByteRandomWriter;
+import TRANS.Data.Writer.TransWriterFactory;
+import TRANS.Data.Writer.Interface.ByteWriter;
 import TRANS.Exceptions.WrongArgumentException;
-import TRANS.util.Byte2DoubleReader;
-import TRANS.util.ByteWriter;
 import TRANS.util.Host;
-import TRANS.util.OptimusDouble2ByteRandomWriter;
 import TRANS.util.OptimusTranslator;
 
 public class Partition implements Writable, Runnable {
@@ -215,6 +219,8 @@ public class Partition implements Writable, Runnable {
 		OptimusShape src = new OptimusShape();
 		src.readFields(cin);
 		
+		OptimusArray array = this.rmanager.getArray(this.arrayid);
+		
 		this.rmanager = rmanager;
 		rmanager.createPatitionDataFile(this);
 		OptimusZone zone = rmanager.getZone(this.zid);
@@ -235,7 +241,7 @@ public class Partition implements Writable, Runnable {
 		}
 
 		if (schunk.ShapeEquals(dchunk)) {
-			len *= 8;
+			len *= array.getType().getElementSize();
 			byte[] tmp = new byte[4096];
 			while (len > 0) {
 				int tlen = cin.read(tmp);
@@ -245,9 +251,12 @@ public class Partition implements Writable, Runnable {
 		} else {
 				
 			int fnum = 0;
-			Byte2DoubleReader reader = new Byte2DoubleReader(1*1024*1024,null,cin);
-			double [] tdouble = null;
-			ByteWriter  w = new OptimusDouble2ByteRandomWriter(1024*1024,this.dataf,this);
+			ByteReader reader = TransByteReaderFactory.getByteReader(TransDataType.getClass(array.getType()), 1*1024*1024, null, cin);
+			ByteWriter w = TransWriterFactory.getRandomWriter(TransDataType.getClass(array.getType()), 1024*1024, this.dataf, this);
+			
+			//Byte2DoubleReader reader = new Byte2DoubleReader(1*1024*1024,null,cin);
+			Object [] tdouble = null;
+			//ByteWriter  w = new OptimusDouble2ByteRandomWriter(1024*1024,this.dataf,this);
 			
 			OptimusTranslator trans = new OptimusTranslator(len, schunk, dchunk,w);		
 			trans.start();
@@ -276,11 +285,12 @@ public class Partition implements Writable, Runnable {
 
 	private void middleReplica(OptimusReplicationManager rmanager, int rest,
 			DataInputStream cin, DataOutputStream cout) throws IOException, InterruptedException, WrongArgumentException {
-
+		
 		this.readFields(cin);
 		OptimusShape psize = new OptimusShape();
 		psize.readFields(cin);
 		
+		OptimusArray array = this.rmanager.getArray(this.arrayid);
 		this.rmanager = rmanager;
 		// this.rid.setId(rest);
 
@@ -318,7 +328,8 @@ public class Partition implements Writable, Runnable {
 		
 		
 		if (schunk.ShapeEquals(dchunk)) {
-			len *= 8;
+			
+			len *= array.getType().getElementSize();
 			//this.writeMeta(nhostOut);
 			byte[] tmp = new byte[4096];
 			while (len > 0) {
@@ -329,12 +340,13 @@ public class Partition implements Writable, Runnable {
 			}
 			
 		} else {
-			
-			
+			//Byte2DoubleReader reader = new Byte2DoubleReader(1*1024*1024,nhostOut,cin);
+			ByteReader reader = TransByteReaderFactory.getByteReader(TransDataType.getClass(array.getType()), 1*1024*1024, nhostOut, cin);
+			ByteWriter w = TransWriterFactory.getRandomWriter(TransDataType.getClass(array.getType()), 1024*1024, this.dataf, this);
 			int fnum = 0;
-			Byte2DoubleReader reader = new Byte2DoubleReader(1*1024*1024,nhostOut,cin);
-			double [] tdouble = null;
-			ByteWriter  w = new OptimusDouble2ByteRandomWriter(1024*1024,this.dataf,this);
+			
+			Object [] tdouble = null;
+			//ByteWriter  w = new OptimusDouble2ByteRandomWriter(1024*1024,this.dataf,this);
 			OptimusTranslator trans = new OptimusTranslator(len, schunk, dchunk,w);
 		
 			//OptimusWriter writer = new OptimusWriter(w,len*8);
@@ -380,16 +392,19 @@ public class Partition implements Writable, Runnable {
 		return this.dataf.read(buffer);
 	}
 
-	public double[] read(DataChunk chunk) throws IOException {
-		double[] data = new double[chunk.getSize()];
-		dataf.seek(chunk.getChunkOffset() * 8);
+	public Object[] read(DataChunk chunk) throws IOException {
+		Object[] data = new Object[chunk.getSize()];
+		OptimusArray array = this.rmanager.getArray(this.arrayid);
+		System.out.println(chunk.getChunkOffset() * this.rmanager.getArray(this.arrayid).getType().getElementSize());
+		dataf.seek(chunk.getChunkOffset() * array.getType().getElementSize());
 		/*	for (int i = 0; i < chunk.getSize(); i++) {
 			data[i] = this.dataf.readDouble();
 		}
 		*/
 		int fnum = 0;
-		Byte2DoubleReader reader = new Byte2DoubleReader(1*1024*1024,null,dataf);
-		double [] tdouble = null;
+		ByteReader reader = TransByteReaderFactory.getByteReader(TransDataType.getClass(array.getType()), 1*1024*1024, null, dataf); 
+		//		new Byte2DoubleReader(1*1024*1024,null,dataf);
+		Object [] tdouble = null;
 		int size = chunk.getSize();
 		while(fnum < size)
 		{

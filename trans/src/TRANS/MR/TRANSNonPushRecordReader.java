@@ -19,7 +19,7 @@ public class TRANSNonPushRecordReader extends TRANSRecordReader<PID, OptimusData
 	public OptimusData getCurrentValue() throws IOException, InterruptedException {
 		OptimusZone zone = split.getZone();
 		OptimusArray array = split.getArray();
-		return dp.readDouble(array.getId(), split.getPid(), split.getPshape(), split.getStart(), split.getOff());
+		return dp.readData(array.getId(), split.getPid(), split.getPshape(), split.getStart(), split.getOff());
 	}
 
 }

@@ -9,7 +9,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import TRANS.Array.DataChunk;
+import TRANS.Data.TransDataType;
 
+import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
@@ -43,9 +45,8 @@ public class NetcdfScanner implements OptimusScanner {
 		}
 		return 0;
 	}
-
 	
-	public   double [] readChunkDouble(DataChunk chunk, String name) {
+	public   Object [] readChunkData(DataChunk chunk, String name) {
 		
 		Variable v = nc.findVariable(name);
 		if( v == null )
@@ -54,7 +55,7 @@ public class NetcdfScanner implements OptimusScanner {
 			return null;
 		}
 		try {
-				return  (double [] )v.read(chunk.getStart(), chunk.getChunkSize()).copyTo1DJavaArray();
+				return  (Object [] )v.read(chunk.getStart(), chunk.getChunkSize()).copyTo1DJavaArray();
 			} catch (IOException e) {
 				
 				e.printStackTrace();
@@ -86,7 +87,10 @@ public class NetcdfScanner implements OptimusScanner {
 		}
 		return vnames;
 	}
-	
+	public Variable getVarible(String name)
+	{
+		return nc.findVariable(name);
+	}
 	public int [] getStep()
 	{
 		return this.chunkStep;
@@ -102,6 +106,23 @@ public class NetcdfScanner implements OptimusScanner {
 		
 		
 		//	scanner.readChunk(chunk, name)
+	}
+
+	@Override
+	public Class<?> getElementType(String name)throws IOException {
+		Variable v =  nc.findVariable(name);
+		DataType t = v.getDataType();
+		TransDataType type = null;
+		if(t.equals(DataType.DOUBLE))
+		{
+			return Double.class;
+		}else if(t.equals(DataType.FLOAT))
+		{
+			return Float.class;
+		}else{
+			System.out.println("Un supported data type");
+			throw new IOException("Unsupported data type");
+		}
 	}
 
 }

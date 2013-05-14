@@ -8,15 +8,15 @@ import org.apache.hadoop.io.Writable;
 
 public class Optimus1Ddata implements Writable{
 
-	public double[] getData() {
+	public Object[] getData() {
 		return data;
 	}
-	public void setData(double[] data) {
+	public void setData(Object[] data) {
 		this.data = data;
 	}
-	double [] data = null;
+	Object [] data = null;
 	public Optimus1Ddata(){}
-	public Optimus1Ddata(double []data)
+	public Optimus1Ddata(Object []data)
 	{
 		this.data = data;
 	}
@@ -32,7 +32,7 @@ public class Optimus1Ddata implements Writable{
 		for(int i = 0 ; i < data.length; i++)
 		{
 			//out.writeFloat(data[i]);
-			out.writeDouble(data[i]);
+			//out.writeDouble(data[i]);
 		}
 	}
 	@Override
@@ -44,7 +44,7 @@ public class Optimus1Ddata implements Writable{
 			this.data = null;
 			return ;
 		}
-		this.data = new double[len];
+	//	this.data = new double[len];
 		for(int i = 0; i < len; i++)
 		{
 			this.data[i]  = in.readDouble();

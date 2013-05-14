@@ -58,6 +58,7 @@ import TRANS.Array.PID;
 import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Array.ZoneID;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
 import TRANS.Protocol.OptimusDataProtocol;
@@ -349,10 +350,10 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 	}
 
 	private ArrayID createArray(ArrayID aid, ZoneID zid, Text name,
-			FloatWritable devalue) throws WrongArgumentException {
+			FloatWritable devalue,TransDataType type) throws WrongArgumentException {
 		ConcurrentHashMap<String, ArrayID> aName = this.arrayName.get(zid);
 		OptimusArray array = new OptimusArray(zid, aid, new String(
-				name.getBytes()), devalue.get());
+				name.getBytes()), devalue.get(),type);
 
 		array.setDeleted(OptimusArray.ARRAY_STATUS.CREATING);
 		this.arrays.put(aid, array);
@@ -373,13 +374,14 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 		args.add(zid);
 		args.add(name);
 		args.add(devalue);
+		args.add(type);
 		TransOperation op = new TransOperation(TRANSOP.CREATE_ARRAY, args);
 		this.logger.logOperation(op);
 		return aid;
 	}
 
 	@Override
-	public ArrayID createArray(ZoneID zid, Text name, FloatWritable devalue)
+	public ArrayID createArray(ZoneID zid, Text name, FloatWritable devalue,TransDataType type)
 			throws TRANS.Exceptions.WrongArgumentException {
 		ConcurrentHashMap<String, ArrayID> aName = this.arrayName.get(zid);
 		if (aName == null) {
@@ -394,7 +396,7 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 		}
 
 		aid = new ArrayID(this.getNextArrayID());
-		this.createArray(aid, zid, name, devalue);
+		this.createArray(aid, zid, name, devalue,type);
 		return aid;
 	}
 
@@ -899,7 +901,9 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 						name.readFields(din);
 						FloatWritable dvalue = new FloatWritable();
 						dvalue.readFields(din);
-						this.createArray(aid, id, name, dvalue);
+						TransDataType t = new TransDataType();
+						t.readFields(din);
+						this.createArray(aid, id, name, dvalue,t);
 					} else if (ops.equals(TRANSOP.CREATE_ZONE)) {
 						Text name = new Text();
 						name.readFields(din);

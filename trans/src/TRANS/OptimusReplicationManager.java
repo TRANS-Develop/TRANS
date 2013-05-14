@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import TRANS.Array.ArrayID;
+import TRANS.Array.OptimusArray;
 import TRANS.Array.OptimusZone;
 import TRANS.Array.PID;
 import TRANS.Array.Partition;
@@ -49,6 +50,7 @@ public class OptimusReplicationManager extends Thread {
 	ServerSocket socket = null;
 	ConcurrentHashMap<ArrayID, ConcurrentHashMap<PID, Partition>> partitions = new ConcurrentHashMap<ArrayID, ConcurrentHashMap<PID, Partition>>();
 	ConcurrentHashMap<ZoneID, OptimusZone> zones = new ConcurrentHashMap<ZoneID, OptimusZone>();
+	ConcurrentHashMap<ArrayID, OptimusArray> arrays = new ConcurrentHashMap<ArrayID, OptimusArray>();
 
 	LocalDataManager dataManager = null;
 
@@ -84,6 +86,24 @@ public class OptimusReplicationManager extends Thread {
 				return z;
 			} catch (Exception e) {
 				System.out.println("Trying to get Zone info Failure" + id);
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
+	public synchronized OptimusArray getArray(ArrayID id)
+	{
+		if(this.arrays.containsKey(id))
+		{
+			return this.arrays.get(id);
+		}else{
+			try{
+				OptimusArray array = ci.openArray(id);
+				this.arrays.put(id, array);
+				return array;
+			}catch(Exception e)
+			{
+				System.out.println("Trying to get Array info Failure" + id);
 				e.printStackTrace();
 				return null;
 			}

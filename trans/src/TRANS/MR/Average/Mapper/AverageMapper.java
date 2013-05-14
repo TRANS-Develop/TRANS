@@ -35,12 +35,9 @@ protected void setup(Context context) throws IOException, InterruptedException {
                   throws IOException, InterruptedException {
 	  
     AverageResult r = new AverageResult();
-   	double []data = value.getData();
+   	Object []data = value.getData();
     c.increment(data.length);
-    for(int i = 0 ; i < data.length; i++)
-    {
-   	  	r.addValue(data[i]);
-    }
+    r.addAll(data);
     context.write(new LongWritable(1), r);
    }
       

@@ -18,6 +18,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import TRANS.Array.ArrayID;
 import TRANS.Array.DataChunk;
+import TRANS.Array.OptimusArray;
 import TRANS.Array.OptimusZone;
 import TRANS.Client.ZoneClient;
 import TRANS.MR.Binary.TransBinaryInputFormat;
@@ -145,8 +146,13 @@ public class Binary {
 			
 		}
 		OptimusCatalogProtocol ci = zcreater.getCi();
+		
+		OptimusZone inZone = ci.openZone(new Text(names1[0]));
+		OptimusArray inArray = ci.openArray(inZone.getId(), new Text(names2[1]));
+		
+		//TODO
 		ArrayID array = ci.createArray(zone.getId(), new Text(arrayName3),
-				new FloatWritable(0));
+				new FloatWritable(0),inArray.getType());
 		int []pshape = zone.getPstep().getShape();
 		String p = "";
 		p+=pshape[0];

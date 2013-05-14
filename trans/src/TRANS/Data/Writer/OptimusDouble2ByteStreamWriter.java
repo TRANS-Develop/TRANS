@@ -1,8 +1,10 @@
-package TRANS.util;
+package TRANS.Data.Writer;
 
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import TRANS.Data.Writer.Interface.ByteWriter;
 
 public class OptimusDouble2ByteStreamWriter implements ByteWriter {
 
@@ -16,14 +18,14 @@ public class OptimusDouble2ByteStreamWriter implements ByteWriter {
 		data = new byte[this.size * 8];
 		this.dataout = out;
 	}
-
-	public void writeDouble(double f) throws IOException {
+	
+	
+	public void write(Object f) throws IOException {
 		if (cur >= size * 8) {
 			this.dataout.write(data);
 			this.cur = 0;
 		}
-
-		long l = Double.doubleToLongBits(f);
+		long l = Double.doubleToLongBits((Double)f);
 
 		for (int i = 0; i < 8; i++) {
 			data[cur++] = new Long(l).byteValue();// new Integer(l).byteValue();
@@ -31,7 +33,7 @@ public class OptimusDouble2ByteStreamWriter implements ByteWriter {
 		}
 	}
 
-	public void writeDouble(double[] fs) throws IOException {
+	public void write(Object[] fs) throws IOException {
 		if (this.size < fs.length) {
 			this.close();
 			this.data = new byte[fs.length * 8];
@@ -39,16 +41,12 @@ public class OptimusDouble2ByteStreamWriter implements ByteWriter {
 		int i;
 		for (int j = 0; j < fs.length; j++) {
 
-			long l = Double.doubleToLongBits(fs[j]);
+			long l = Double.doubleToLongBits((Double)fs[j]);
 			for (i = 0; i < 8; i++) {
 				data[cur++] = new Long(l).byteValue();// new
 														// Integer(l).byteValue();
 				l = l >> 8;
 			}
-			/*
-			 * l = Float.floatToIntBits(fs[j]); for (i = 0; i < 8; i++) {
-			 * data[cur++] = new Integer(l).byteValue(); l = l >> 8; }
-			 */
 		}
 
 	}

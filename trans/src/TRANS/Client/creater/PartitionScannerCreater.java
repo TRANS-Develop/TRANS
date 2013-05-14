@@ -15,12 +15,14 @@ import TRANS.Array.PID;
 import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Client.ArrayCreater;
+import TRANS.Data.TransDataType;
+import TRANS.Data.Writer.OptimusDouble2ByteStreamWriter;
+import TRANS.Data.Writer.TransWriterFactory;
+import TRANS.Data.Writer.Interface.ByteWriter;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
-import TRANS.util.ByteWriter;
 import TRANS.util.Host;
 import TRANS.util.OptimusConfiguration;
-import TRANS.util.OptimusDouble2ByteStreamWriter;
 
 public class PartitionScannerCreater extends PartitionCreater implements Runnable {
 	
@@ -31,7 +33,7 @@ public class PartitionScannerCreater extends PartitionCreater implements Runnabl
 	private OptimusZone zone = null;
 	private PID partitionId;
 	OptimusConfiguration conf;
-	private double []data;
+	private Object []data;
 	private DataChunk chunk = null;
 	private String vname = null;
 	private long scanTime = 0; 
@@ -63,22 +65,25 @@ public class PartitionScannerCreater extends PartitionCreater implements Runnabl
 		
 		synchronized(scanner){
 			long btime = System.currentTimeMillis();
-			this.data = scanner.readChunkDouble(chunk, vname);
+			this.data = scanner.readChunkData(chunk, vname);
 			long etime = System.currentTimeMillis();
 			this.scanTime = etime - btime;
 		}	
 		try {
 			
 			long btime = System.currentTimeMillis();
-			OptimusDouble2ByteStreamWriter writer = (OptimusDouble2ByteStreamWriter) this.getWriter();
+			ByteWriter writer =  this.getWriter();
 			if( data == null )
 			{
 				System.out.println("data null");
 				System.exit(-1);
 			}
+			//writer.write(this.data);
+			
 			for(int i = 0 ; i < data.length; i++)
 			{
-				writer.writeDouble(data[i]);
+				writer.write(data[i]);
+			//	writer.writeDouble(data[i]);
 			//	cout.writeDouble(data[i]);
 			}
 			writer.close();
@@ -151,9 +156,9 @@ public class PartitionScannerCreater extends PartitionCreater implements Runnabl
 			p.write(cout);
 			new OptimusShape(chunk.getChunkSize()).write(cout);
 			new OptimusShape(this.srcShape).write(cout);
-			
-			writer = new OptimusDouble2ByteStreamWriter(1024*1024,cout);
-			
+			Class<?> type = TransDataType.getClass(this.acreater.getType());
+			writer = TransWriterFactory.getStreamWriter(type, 1024*1024, cout);
+		
 			
 		} catch (Exception e) {
 

@@ -14,9 +14,13 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.jdom2.JDOMException;
 
+import ucar.ma2.DataType;
+import ucar.nc2.Variable;
+
 import TRANS.Array.DataChunk;
 import TRANS.Array.OptimusZone;
 import TRANS.Client.creater.NetcdfScanner;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.util.OptimusConfiguration;
 import TRANS.util.OptimusDefault;
@@ -185,8 +189,9 @@ public class NetcdfLoader {
 
 	public void uploadArray(String vname,String nname,float defaultValue) throws UnknownHostException, IOException, WrongArgumentException, InterruptedException
 	{
+		TransDataType type = new TransDataType(scanner.getElementType(vname));
 		
-		creater = new ArrayCreater(conf, zone, this.shapes.get(this.shapes.size() - 1),nname,this.thread_num,defaultValue);
+		creater = new ArrayCreater(conf, zone, this.shapes.get(this.shapes.size() - 1),nname,this.thread_num,defaultValue,type);
 		int i ;
 		int []srcShape = new int [chunk.getChunkStep().length];
 		long tmpSize  = 1;
@@ -228,6 +233,7 @@ public class NetcdfLoader {
 		{
 			chunk.reset();
 			this.uploadArray(s,s,0);
+			
 		}
 		System.out.println("Data Upload over");
 	}

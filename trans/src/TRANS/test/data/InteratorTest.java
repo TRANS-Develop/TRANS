@@ -1,5 +1,7 @@
 package TRANS.test.data;
 
+import java.io.IOException;
+
 import TRANS.Array.OptimusShape;
 import TRANS.Data.*;
 import TRANS.Exceptions.WrongArgumentException;
@@ -10,14 +12,15 @@ public class InteratorTest {
 	/**
 	 * @param args
 	 * @throws WrongArgumentException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws WrongArgumentException {
+	public static void main(String[] args) throws WrongArgumentException, IOException {
 		// TODO Auto-generated method stub
 		
-		double [] d = new double[64];
+		Double [] d = new Double[64];
 		for(int i = 0 ; i < d.length; i++ )
 		{
-			d[i] = i;
+			d[i] = new Double(i);
 		}
 		//public OptimusData(float []data,OptimusShape start, OptimusShape off,OptimusShape shape)
 		int [] tstart = {0,0,0};

@@ -34,12 +34,44 @@ private double _currentValue;
 	  this._currentValue = 0.0;
 	  this._valuesCombinedCount = 0;
   }
-  
-  public void addValue(double d){
+  public void addValue(Float f)
+  {
+	  this._currentValue += f;
+	  this._valuesCombinedCount++;	  
+  }
+  public void addValue(Integer i)
+  {
+	  this._currentValue += i;
+	  this._valuesCombinedCount++;	  
+  }
+  public void addValue(Double d){
 	  this._currentValue += d;
 	  this._valuesCombinedCount++;
   }
-  
+  public void addAll(Object []values)
+  {
+	  Class<?> type = values.getClass();
+	  if(type.equals(Double.class))
+	  {
+		  for(int i = 0; i < values.length; i++)
+		  {
+			  this.addValue((Double)values[i]);
+		  }
+	  }else if(type.equals(Float.class)){
+		  for(int i = 0; i < values.length; i++)
+		  {
+			  this.addValue((Float)values[i]);
+		  }
+	  }else if(type.equals(Integer.class))
+	  {
+		  for(int i = 0; i < values.length; i++)
+		  {
+			  this.addValue((Integer)values[i]);
+		  }
+	  }else{
+		  System.out.println("Unsupported type");
+	  }
+  }
   public void addResult(AverageResult r)
   {
 	  this._currentValue += r.get_currentValue();

@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 
 import TRANS.Array.OptimusShape;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 
 
@@ -15,19 +16,28 @@ import TRANS.Exceptions.WrongArgumentException;
  *
  */
 public class OptimusData implements Writable {
+	
+	public TransDataType getType() {
+		return type;
+	}
+	public void setType(TransDataType type) {
+		this.type = type;
+	}
+
+	private TransDataType type = new TransDataType();
 	private OptimusShape start;
 	private OptimusShape off;
 	private OptimusShape shape;
-	double [] data = null;
-	
+	Object [] data = null;
 	
 	public OptimusData(){}
-	public OptimusData(double []data,OptimusShape start, OptimusShape off,OptimusShape shape)
+	public OptimusData(Object []data,OptimusShape start, OptimusShape off,OptimusShape shape) throws IOException
 	{
 		this.data = data;
 		this.start = start;
 		this.off = off;
 		this.shape = shape;
+		this.type = new TransDataType(data[0].getClass());
 	}
 	public OptimusShape getShape() {
 		return shape;
@@ -47,36 +57,110 @@ public class OptimusData implements Writable {
 	public void setOff(OptimusShape off) {
 		this.off = off;
 	}
+	
+	private void writeDouble(DataOutput out) throws IOException 
+	{
+		//Double []ddata = (Double [])this.data;
+		for(int i = 0 ; i < this.data.length; i++)
+		{
+			//out.writeFloat(this.data[i]);
+			out.writeDouble((Double)data[i]);
+		}
+	}
+	private void readDouble(DataInput in)throws IOException
+	{
+		for(int i = 0 ; i < this.data.length; i++)
+		{
+			this.data[i] = in.readDouble();
+		}
+	}
+	private void writeFloat(DataOutput out) throws IOException 
+	{
+		//Float []ddata = (Float [])this.data;
+		for(int i = 0 ; i < this.data.length; i++)
+		{
+			out.writeFloat((Float)data[i]);
+		}
+	}
+	private void readFloat(DataInput in)throws IOException
+	{
+		for(int i = 0 ; i < this.data.length; i++)
+		{
+			this.data[i] = in.readFloat();
+		}
+	}
+	private void writeInteger(DataOutput out) throws IOException 
+	{
+		//Integer []ddata = (Integer [])this.data;
+		for(int i = 0 ; i < this.data.length; i++)
+		{
+			out.writeInt((Integer)data[i]);
+		}
+	}
+	private void readInteger(DataInput in)throws IOException
+	{
+		for(int i = 0 ; i < this.data.length; i++)
+		{
+			this.data[i] = in.readInt();
+		}
+	}
 	@Override
 	public void write(DataOutput out) throws IOException {
 		// TODO Auto-generated method stub
+		
+		this.type.write(out);
 		if(this.data == null)
 		{
 			out.writeInt(0);
 			return;
 		}
 		out.writeInt(this.data.length);
-		for(int i = 0 ; i < this.data.length; i++)
+		Class<?> dc = TransDataType.getClass(type);
+		if(dc.equals(Double.class))
+		{
+			this.writeDouble(out);
+		}else if(dc.equals(Float.class))
+		{
+			this.writeFloat(out);
+		}else if(dc.equals(Integer.class))
+		{
+			this.writeInteger(out);
+		}else{
+			System.out.println("Unknown Data Type");
+			throw new IOException("Unknown Data Type");
+		}
+	/*	for(int i = 0 ; i < this.data.length; i++)
 		{
 			//out.writeFloat(this.data[i]);
 			out.writeDouble(this.data[i]);
 		}
+	*/
 			
 	}
-	public double[] getData() {
+	public Object[] getData() {
 		return data;
 	}
-	public void setData(double[] data) {
+	public void setData(Object[] data) {
 		this.data = data;
 	}
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		// TODO Auto-generated method stub
+		this.type.readFields(in);
 		int l = in.readInt();
-		this.data = new double [l];
-		for(int i = 0; i < l; i++)
+		this.data = new Object[l];
+		Class<?> dc = TransDataType.getClass(type);
+		if(dc.equals(Double.class))
 		{
-			this.data[i] = in.readDouble();
+			this.readDouble(in);
+		}else if(dc.equals(Float.class))
+		{
+			this.readFloat(in);
+		}else if(dc.equals(Integer.class))
+		{
+			this.readInteger(in);
+		}else{
+			throw new IOException("Unknown Data Type");
 		}
 	}
 	
@@ -86,7 +170,7 @@ public class OptimusData implements Writable {
 	 * @return
 	 * @throws WrongArgumentException 
 	 */
-	public double getData(OptimusShape off,boolean inPartition) throws WrongArgumentException
+	public Object getData(OptimusShape off,boolean inPartition) throws WrongArgumentException
 	{
 		int []roff = new int [this.off.getShape().length];
 		int [] toff = off.getShape();
@@ -120,7 +204,7 @@ public class OptimusData implements Writable {
 		return this.data[offset];
 	}
 
-	public double getDataByOff(int off) throws WrongArgumentException
+	public Object getDataByOff(int off) throws WrongArgumentException
 	{
 		if(off >= this.data.length)
 		{

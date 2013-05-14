@@ -152,8 +152,13 @@ public class Median {
 			
 		}
 		OptimusCatalogProtocol ci = zcreater.getCi();
+		
+		OptimusZone inZone = ci.openZone(new Text(zoneName));
+		OptimusArray inArray = ci.openArray(inZone.getId(), new Text(arrayName));
+		
+		
 		ArrayID array = ci.createArray(zone.getId(), new Text(outName),
-				new FloatWritable(0));
+				new FloatWritable(0),inArray.getType());
 		int []pshape = zone.getPstep().getShape();
 		String p = "";
 		p+=pshape[0];

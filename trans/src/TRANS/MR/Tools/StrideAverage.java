@@ -18,6 +18,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import TRANS.Array.ArrayID;
 import TRANS.Array.DataChunk;
+import TRANS.Array.OptimusArray;
 import TRANS.Array.OptimusZone;
 import TRANS.Client.ZoneClient;
 import TRANS.MR.Average.StrideAverageResult;
@@ -145,8 +146,11 @@ public class StrideAverage {
 			
 		}
 		OptimusCatalogProtocol ci = zcreater.getCi();
+		OptimusZone inZone = ci.openZone(new Text(zoneName));
+		OptimusArray inArray = ci.openArray(inZone.getId(), new Text(arrayName));
+		
 		ArrayID array = ci.createArray(zone.getId(), new Text(outName),
-				new FloatWritable(0));
+				new FloatWritable(0),inArray.getType());
 		int []pshape = zone.getPstep().getShape();
 		String p = "";
 		p+=pshape[0];

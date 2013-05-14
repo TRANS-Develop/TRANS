@@ -49,8 +49,10 @@ public class OptimusDoubleCalculator extends OptimusCalculator {
 	}
 
 	@Override
-	public double calcOne(double o1, double o2) {
+	public Object calcOne(Object obj1, Object obj2) {
 		// TODO Auto-generated method stub
+		Double o1 = (Double)obj1;
+		Double o2 = (Double)obj2;
 		o1*= this.modulus1;
 		o2*= this.modulus2;
 		switch(op)
@@ -72,16 +74,16 @@ public class OptimusDoubleCalculator extends OptimusCalculator {
 	}
 
 	@Override
-	public double []calcArray(double a1[], double []a2)
+	public Object []calcArray(Object a1[], Object []a2)
 	{
 		switch(op)
 		{
 		case '+':
-			return calcArrayAdd(a1,a2);
+	//		return calcArrayAdd(a1,a2);
 		case '-':
-			return calcArraySub(a1,a2);
+	//		return calcArraySub(a1,a2);
 		case '*':
-			return calcArrayMul(a1,a2);
+	//		return calcArrayMul(a1,a2);
 		default:
 				break;
 		}

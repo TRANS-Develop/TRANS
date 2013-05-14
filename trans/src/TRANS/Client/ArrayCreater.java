@@ -22,6 +22,7 @@ import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Client.creater.OptimusScanner;
 import TRANS.Client.creater.PartitionScannerCreater;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
 import TRANS.util.OptimusConfiguration;
@@ -33,6 +34,14 @@ import TRANS.util.OptimusDefault;
  */
 public class ArrayCreater {
 
+	public TransDataType getType() {
+		return type;
+	}
+
+	public void setType(TransDataType type) {
+		this.type = type;
+	}
+
 	private ArrayID id = null;
 	private PID cur = null;
 	OptimusCatalogProtocol ci = null;
@@ -43,7 +52,7 @@ public class ArrayCreater {
 	private Semaphore semp= null;
 	OptimusConfiguration conf;
 	private int []srcShape = null;
-	
+	private TransDataType type = new TransDataType();
 	/**
 	 * @param conf
 	 * @param zone
@@ -51,7 +60,8 @@ public class ArrayCreater {
 	 * @param tsize: thread number used to create array
 	 * @throws IOException
 	 */
-	public ArrayCreater(OptimusConfiguration conf, OptimusZone zone,int [] srcShape,String name,int tsize,float devalue) throws IOException
+	public ArrayCreater(OptimusConfiguration conf, OptimusZone zone,int [] srcShape,String name,
+			int tsize,float devalue,TransDataType type) throws IOException
 	{
 		String catalogHost = conf.getString("Optimus.catalog.host", OptimusDefault.CATALOG_HOST);
 		int catalogPort = conf.getInt("Optimus.catalog.port", OptimusDefault.CATALOG_PORT);
@@ -66,6 +76,7 @@ public class ArrayCreater {
 		this.semp = new Semaphore(tsize*2);
 		this.exe = Executors.newFixedThreadPool(tsize);
 		this.srcShape = srcShape;
+		this.type = type;
 		//new DataChunk(zone.getSize().getShape(),zone.getPstep().getShape());
 	}
 	
@@ -73,7 +84,7 @@ public class ArrayCreater {
 	{
 //		this.ci.createArray(name, vsize, chunkStep, chunkStrategy)
 	
-		this.id = this.ci.createArray(zone.getId(),new Text(name),new FloatWritable(defaultValue));
+		this.id = this.ci.createArray(zone.getId(),new Text(name),new FloatWritable(defaultValue),type);
 		this.cur = new PID(0);
 	}
 	public void RemoveTask() throws InterruptedException

@@ -38,7 +38,7 @@ public class StrideResult extends TRANSDataIterator {
 		this.id = id;
 	}
 	public StrideResult(){};
-	public StrideResult(double []data, int []start, int []shape)
+	public StrideResult(Object []data, int []start, int []shape)
 	{
 		super(data,start,shape);
 	}

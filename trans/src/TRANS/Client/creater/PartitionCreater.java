@@ -3,8 +3,8 @@ package TRANS.Client.creater;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+import TRANS.Data.Writer.Interface.ByteWriter;
 import TRANS.Exceptions.WrongArgumentException;
-import TRANS.util.ByteWriter;
 
 public abstract class PartitionCreater {
 	protected DataOutputStream cout = null;

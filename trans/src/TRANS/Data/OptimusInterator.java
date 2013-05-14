@@ -73,7 +73,7 @@ public class OptimusInterator {
 		}
 		return true;
 	}
-	public double get() throws WrongArgumentException
+	public Object get() throws WrongArgumentException
 	{
 		return this.data.getDataByOff(pos);
 	}

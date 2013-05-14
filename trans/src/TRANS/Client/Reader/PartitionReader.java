@@ -45,7 +45,7 @@ public class PartitionReader {
 				new InetSocketAddress(catalogHost,catalogPort), new Configuration());
 	}
 	
-	public double [] readData(OptimusZone zone,String name, int []start, int []off) throws IOException, WrongArgumentException
+	public Object [] readData(OptimusZone zone,String name, int []start, int []off) throws IOException, WrongArgumentException
 	{
 		OptimusArray array = ci.openArray(zone.getId(),new Text(name));
 		System.out.println("Reader:"+array.getId());
@@ -56,12 +56,12 @@ public class PartitionReader {
 		}
 		return this.readData(zone, array, start, off);
 	}
-	public double []readData(OptimusZone zone, int aid, int []start, int[]off) throws WrongArgumentException, IOException
+	public Object []readData(OptimusZone zone, int aid, int []start, int[]off) throws WrongArgumentException, IOException
 	{
 		OptimusArray array = ci.openArray(new ArrayID(aid));
 		return this.readData(zone, array, start, off);
 	}
-	private double[] readData(OptimusZone zone, OptimusArray array, int []start, int[]off) throws IOException, WrongArgumentException
+	private Object[] readData(OptimusZone zone, OptimusArray array, int []start, int[]off) throws IOException, WrongArgumentException
 	{
 		DataChunk chunk = new DataChunk(zone.getSize().getShape(),zone.getPstep().getShape());
 		chunk.setOverlap(array.getOverlap().getShape());
@@ -70,9 +70,11 @@ public class PartitionReader {
 		for(int i = 0 ; i < start.length; i++)
 			rsize *= off[i];
 		
-		double [] rdata = null;
+		Object [] rdata = null;
 		if(this.doRead )
-			rdata = new double[rsize];
+		{
+			rdata = new Object[rsize];
+		}
 	
 		
 		Vector<int []> strategy = zone.getStrategy().getShapes();
@@ -153,7 +155,7 @@ public class PartitionReader {
 		
 			OptimusDataProtocol dp = h.getDataProtocol();
 			// start in the overall array
-			double [] data = dp.readDouble(array.getId(),p,new OptimusShape(c.getChunkSize()), new OptimusShape(rstart), new OptimusShape(noff)).getData();
+			Object [] data = dp.readData(array.getId(),p,new OptimusShape(c.getChunkSize()), new OptimusShape(rstart), new OptimusShape(noff)).getData();
 			OptimusDataManager.readFromMem(nstart, noff, noff, off, data, nstart, rdata, start);
 			}
 			totalSize += dataSize;
@@ -234,7 +236,7 @@ public class PartitionReader {
 	}
 
 	static public int readFromMem(int start [] , int [] off,int []fsize,int []tsize, 
-			double [] fdata,int [] fstart, double[] tdata, int []tstart)
+			Object [] fdata,int [] fstart, Object[] tdata, int []tstart)
 	{
 		int size = 1;
 		int fpos = 0;

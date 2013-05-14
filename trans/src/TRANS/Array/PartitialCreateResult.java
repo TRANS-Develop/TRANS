@@ -19,7 +19,7 @@ public class PartitialCreateResult extends TRANSDataIterator {
 
 	Set<PresultKey> dealtKeys = new HashSet<PresultKey>();
 
-	public PartitialCreateResult(double[] ds, int[] start, int[] chunkSize) {
+	public PartitialCreateResult(Object[] ds, int[] start, int[] chunkSize) {
 		// TODO Auto-generated constructor stub
 		super(ds,start,chunkSize);
 	}

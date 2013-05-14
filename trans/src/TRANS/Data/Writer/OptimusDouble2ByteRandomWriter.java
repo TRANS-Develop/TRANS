@@ -1,9 +1,10 @@
-package TRANS.util;
+package TRANS.Data.Writer;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import TRANS.Array.Partition;
+import TRANS.Data.Writer.Interface.ByteWriter;
 
 
 public class OptimusDouble2ByteRandomWriter implements ByteWriter {
@@ -20,8 +21,16 @@ public class OptimusDouble2ByteRandomWriter implements ByteWriter {
 		this.rout = out;
 		this.p = p;
 	}
+	public void write(Object w) throws IOException
+	{
+		this.writeDouble((double)w);
+	}
+	public void write(Object []w) throws IOException
+	{
+		this.writeDouble((Double [])w);
+	}
 
-	public void writeDouble(double f) throws IOException {
+	private void writeDouble(Double f) throws IOException {
 		if (cur >= size * 8) {
 
 			this.rout.write(data);
@@ -36,7 +45,7 @@ public class OptimusDouble2ByteRandomWriter implements ByteWriter {
 		}
 	}
 
-	public void writeDouble(double[] fs) throws IOException {
+	private void writeDouble(Double[] fs) throws IOException {
 		if (this.size < fs.length) {
 			this.rout.write(data, 0, this.cur);
 			this.data = new byte[fs.length * 8];

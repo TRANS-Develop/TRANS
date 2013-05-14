@@ -16,6 +16,7 @@ import TRANS.Array.DataChunk;
 import TRANS.Array.OptimusZone;
 import TRANS.Client.ArrayCreater;
 import TRANS.Client.ZoneClient;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.util.OptimusConfiguration;
 import TRANS.util.OptimusDefault;
@@ -33,10 +34,11 @@ public class RandomArrayCreater {
 	private int [] vsize = null;
 	private long dataSize = 0;
 	private long timeUsed = 0;
+	private TransDataType type = new TransDataType();
 	public RandomArrayCreater(OptimusConfiguration conf,String zonename, int []Vshape, 
-			int []pshape, Vector<int[]> strategy, int thread_num) throws IOException
+			int []pshape, Vector<int[]> strategy, int thread_num,TransDataType type) throws IOException
 	{
-		scanner = new OptimusRandomScanner();
+		scanner = new OptimusRandomScanner(type.getClass());
 	
 		vsize  = Vshape;
 		chunk = new DataChunk( vsize,pshape);
@@ -49,6 +51,7 @@ public class RandomArrayCreater {
 		}
 		this.conf = conf;
 		this.thread_num = thread_num;
+		this.type = type;
 	}
 	public static void main(String[] args) throws ParseException, IOException, WrongArgumentException, JDOMException, InterruptedException {
 
@@ -64,6 +67,7 @@ public class RandomArrayCreater {
 		options.addOption("v",true,"Varible name");
 		options.addOption("vs",true,"Varible shape");
 		options.addOption("z",true,"Zone name");
+		options.addOption("t",true,"Type of array");
 		options.addOption("Thread",true,"Thread number used");
 		CommandLine cmd = parser.parse(options, args);
 		if( cmd.hasOption("h"))
@@ -86,6 +90,27 @@ public class RandomArrayCreater {
              System.exit(-1);
 			
 		}
+		String typeString = cmd.getOptionValue("t");
+		if(typeString == null)
+		{
+			 f.printHelp("need data type:"+p +"vs:" + vs, options);
+             System.exit(-1);
+		}
+		typeString = typeString.toLowerCase();
+		Class<?> t = null;
+		if(typeString.equals("double"))
+		{
+			t = Double.class;
+		}else if(typeString.equals("float"))
+		{
+			t = Float.class;
+		}else{
+			System.out.println("Unknown data Type");
+			
+			f.printHelp("need data type:"+p +"vs:" + vs, options);
+			System.exit(-1);
+		}
+		
 		int d = ps.length;
 		int [] pshape = new int [d];
 		int [] vshape = new int [d];
@@ -136,13 +161,13 @@ public class RandomArrayCreater {
             System.exit(-1);
 		}
 
-		RandomArrayCreater creater = new RandomArrayCreater(new OptimusConfiguration(confDir),zonename,vshape,pshape,shapes,tnum);
-		creater.uploadArray(vname, 0);
+		RandomArrayCreater creater = new RandomArrayCreater(new OptimusConfiguration(confDir),zonename,vshape,pshape,shapes,tnum,new TransDataType(t));
+		creater.uploadArray(vname, 0,t);
 		creater.printMarix();
 	}
-	public void uploadArray(String vname,float defaultValue) throws IOException, WrongArgumentException, InterruptedException
+	public void uploadArray(String vname,float defaultValue,Class<?> type) throws IOException, WrongArgumentException, InterruptedException
 	{
-		creater = new ArrayCreater(conf, zone, this.shapes.get(this.shapes.size() - 1),vname,this.thread_num,defaultValue);
+		creater = new ArrayCreater(conf, zone, this.shapes.get(this.shapes.size() - 1),vname,this.thread_num,defaultValue,new TransDataType(type));
 		int i ;
 		int []srcShape = new int [chunk.getChunkStep().length];
 		long tmpSize  = 1;

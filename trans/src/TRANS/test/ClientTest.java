@@ -12,6 +12,7 @@ import TRANS.Client.ArrayCreater;
 import TRANS.Client.ZoneClient;
 import TRANS.Client.creater.OptimusMemScanner;
 import TRANS.Client.creater.OptimusScanner;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.util.OptimusConfiguration;
 
@@ -116,7 +117,7 @@ public class ClientTest {
 			return;
 		}
 		long btime = System.currentTimeMillis();
-		ArrayCreater creater = new ArrayCreater(conf,zone,srcShape,arrayName,1,0);
+		ArrayCreater creater = new ArrayCreater(conf,zone,srcShape,arrayName,1,0,new TransDataType(Float.class));
 		creater.create();
 		
 		DataChunk chunk = new DataChunk(vsize,shape);
@@ -125,10 +126,10 @@ public class ClientTest {
 		{
 			len *= vsize[i];
 		}
-		double [] srcData = new double[len];
+		Float [] srcData = new Float[len];
 		for(int i = 0  ; i < srcData.length; i++)
 		{
-			srcData[i] = i;
+			srcData[i] = new Float(i);
 		}
 		
 		OptimusScanner scanner = new OptimusMemScanner(srcData,srcStart,vsize);

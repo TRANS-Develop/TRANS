@@ -1,4 +1,4 @@
-package TRANS.util;
+package TRANS.Data.Reader;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class Byte2DoubleReader implements ByteReader {
-
+	static int elesize = 8;
 	public int size;
 	byte []data;
 	int cur;
@@ -18,7 +18,7 @@ public class Byte2DoubleReader implements ByteReader {
 	public Byte2DoubleReader(int size, DataOutputStream out,DataInputStream in)
 	{
 		this.size = size;
-		data = new byte [this.size * 8];
+		data = new byte [this.size * elesize];
 		this.datain = in;
 		this.out = out;
 	}
@@ -35,7 +35,7 @@ public class Byte2DoubleReader implements ByteReader {
 	public Byte2DoubleReader(int size, DataOutputStream out,RandomAccessFile in)
 	{
 		this.size = size;
-		data = new byte [this.size * 8];
+		data = new byte [this.size * elesize];
 		this.rin = in;
 		this.out = out;
 	}
@@ -45,10 +45,10 @@ public class Byte2DoubleReader implements ByteReader {
 		int r = -1;
 		if( rin != null)
 		{
-			r = rin.read(data, this.cur, (this.size*8 - this.cur));
+			r = rin.read(data, this.cur, (this.size*elesize - this.cur));
 			
 		}else{
-			r = datain.read(data, this.cur, (this.size*8 - this.cur));
+			r = datain.read(data, this.cur, (this.size*elesize - this.cur));
 		
 		}
 		if(out != null && r != -1)
@@ -64,7 +64,7 @@ public class Byte2DoubleReader implements ByteReader {
 	public void readFromin(int len) throws IOException
 	{
 		int r;
-		int rlen = (this.size*8 - this.cur) > len * 8 ? len * 8 : (this.size*8 - this.cur);
+		int rlen = (this.size*elesize - this.cur) > len * elesize ? len * elesize : (this.size*elesize - this.cur);
 		if( rin != null)
 		{
 			r = rin.read(data, this.cur, rlen );
@@ -104,12 +104,12 @@ public class Byte2DoubleReader implements ByteReader {
 		return fdata;
 	}
 		*/
-	public  double[] readData(){
+	public  Object[] readData(){
 		if( this.cur < 8)
 		{
 			return null;
 		}
-		double [] ddata = new double[this.cur/8];
+		Double [] ddata = new Double[this.cur/elesize];
 		long l;
 		int index = 0;
 		for(int i = 0 ; i < ddata.length; i++)
@@ -132,13 +132,13 @@ public class Byte2DoubleReader implements ByteReader {
 	    	l|=((long)data[index++]<<56);
 	    	ddata [i] = Double.longBitsToDouble(l);
 		}
-		int start = this.cur - this.cur%8;
+		int start = this.cur - this.cur%elesize;
 		for( int i = 0; i < this.cur%8; i++)
 		{
 			this.data[i] = this.data[start+i];
 		}
-		this.cur %= 8;
-		return ddata;
+		this.cur %= elesize;
+		return (Object [])ddata;
 	}
 	
 	

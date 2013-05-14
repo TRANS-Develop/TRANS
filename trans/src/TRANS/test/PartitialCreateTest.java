@@ -16,6 +16,7 @@ import TRANS.Client.ArrayCreater;
 import TRANS.Client.ZoneClient;
 import TRANS.Client.creater.OptimusMemScanner;
 import TRANS.Client.creater.OptimusScanner;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
 import TRANS.Protocol.OptimusDataProtocol;
@@ -55,7 +56,7 @@ public class PartitialCreateTest {
 			return;
 		}
 
-		ArrayCreater creater = new ArrayCreater(conf,zone,srcShape,arrayName,1,0);
+		ArrayCreater creater = new ArrayCreater(conf,zone,srcShape,arrayName,1,0,new TransDataType(Double.class));
 		creater.create();
 		
 		DataChunk chunk = new DataChunk(vsize,shape);
@@ -64,10 +65,10 @@ public class PartitialCreateTest {
 		{
 			len *= vsize[i];
 		}
-		double [] srcData = new double[len];
+		Double [] srcData = new Double[len];
 		for(int i = 0  ; i < srcData.length; i++)
 		{
-			srcData[i] = i;
+			srcData[i] = new Double(i);
 		}
 		OptimusCatalogProtocol ci = zcreater.getCi();
 		OptimusArray array = zcreater.getCi().openArray(zone.getId(), new Text(arrayName));
@@ -75,7 +76,7 @@ public class PartitialCreateTest {
 		OptimusDataProtocol dp = null;
 		do
 		{
-			double [] data = scanner.readChunkDouble(chunk, "data");
+			Object [] data = scanner.readChunkData(chunk, "data");
 			TRANSDataIterator itr = new TRANSDataIterator(data,chunk.getStart(),chunk.getChunkSize());
 			Partition p = new Partition(zone.getId(),array.getId(),
 					new PID(chunk.getChunkNum()), new RID(strategy.size() - 2));

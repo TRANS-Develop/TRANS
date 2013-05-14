@@ -5,14 +5,15 @@ import java.util.concurrent.Semaphore;
 
 import TRANS.Array.ChunkTranslater;
 import TRANS.Array.DataChunk;
+import TRANS.Data.Writer.Interface.ByteWriter;
 
 
 public class OptimusTranslator extends Thread {
 
 	private DataChunk src = null;
 	private DataChunk dst = null;
-	private double [] data = null;
-	java.util.Queue<double []> datas= new java.util.ArrayDeque<double[]>();
+	private Object [] data = null;
+	java.util.Queue<Object []> datas= new java.util.ArrayDeque<Object[]>();
 	
 	private Semaphore w = null;
 	private int size = 0;
@@ -21,16 +22,16 @@ public class OptimusTranslator extends Thread {
 	{
 		this.src = s;
 		this.dst = dst;
-		this.data = new double [size];
+		this.data = new Object [size];
 		this.size = size;
 		this.writer = writer;
 		w = new Semaphore(0);
 	}
-	public double [] getData()
+	public Object [] getData()
 	{
 		return this.data;
 	}
-	public void write(double [] d)
+	public void write(Object [] d)
 	{
 		synchronized(this.datas){
 			
@@ -41,7 +42,7 @@ public class OptimusTranslator extends Thread {
 	@Override
 	public void run() {
 		int translated = 0;
-		double [] tdouble = null;
+		Object [] tdouble = null;
 		while( translated < this.size )
 		{
 			try {
@@ -64,7 +65,7 @@ public class OptimusTranslator extends Thread {
 			}
 		}
 		try {
-			this.writer.writeDouble(this.data);
+			this.writer.write((Object [])this.data);
 			this.writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

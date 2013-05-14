@@ -3,11 +3,13 @@ package TRANS.util;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
+import TRANS.Data.Writer.Interface.ByteWriter;
+
 public class OptimusWriter extends Thread{
 
 	private ByteWriter writer = null;
 	private int ByteToWrite = 0;
-	private double []data = null;
+	private Object []data = null;
 	private Semaphore w = null;
 	private Semaphore r = null;
 	public OptimusWriter(ByteWriter writer, int size)
@@ -17,7 +19,7 @@ public class OptimusWriter extends Thread{
 		r = new Semaphore(0);
 		w = new Semaphore(1);
 	}
-	public void write(double []d) throws InterruptedException
+	public void write(Object []d) throws InterruptedException
 	{
 			w.acquire();
 			this.data = d;
@@ -38,7 +40,7 @@ public class OptimusWriter extends Thread{
 			try{
 				r.acquire();
 				synchronized(this){
-				writer.writeDouble(data);
+				writer.write(data);
 				writen += data.length * 8;
 				data = null;
 				w.release();

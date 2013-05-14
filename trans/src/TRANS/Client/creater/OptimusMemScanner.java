@@ -1,29 +1,31 @@
 package TRANS.Client.creater;
 
+import java.io.IOException;
+
 import TRANS.Array.DataChunk;
 
 public class OptimusMemScanner implements OptimusScanner {
 
-	double[] fdata = null;
+	Object[] fdata = null;
 	int[] fstart = null;
 	int[] fsize = null;
 
-	public OptimusMemScanner(double[] data, int[] fstart, int[] fsize) {
+	public OptimusMemScanner(Object[] data, int[] fstart, int[] fsize) {
 		this.fdata = data;
 		this.fstart = fstart;
 		this.fsize = fsize;
 	}
 
 	@Override
-	public double[] readChunkDouble(DataChunk chunk, String name) {
+	public Object[] readChunkData(DataChunk chunk, String name) {
 		// TODO Auto-generated method stub
-		double[] rdata = new double[chunk.getSize()];
+		Object[] rdata = new Object[chunk.getSize()];
 		this.readFromMem(chunk.getStart(), chunk.getChunkSize(),
 				chunk.getChunkSize(), rdata, chunk.getStart());
 		return rdata;
 	}
 
-	public int readFromMem(int start[], int[] off, int[] tsize, double[] tdata,
+	public int readFromMem(int start[], int[] off, int[] tsize, Object[] tdata,
 			int[] tstart) {
 		int size = 1;
 		int fpos = 0;
@@ -80,5 +82,11 @@ public class OptimusMemScanner implements OptimusScanner {
 			System.out.println("Shit!");
 		}
 		return size;
+	}
+
+	@Override
+	public Class<?> getElementType(String name) throws IOException {
+		// TODO Auto-generated method stub
+		return this.fdata[0].getClass();
 	}
 }
