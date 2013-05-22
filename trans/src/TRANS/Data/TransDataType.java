@@ -50,6 +50,7 @@ public class TransDataType implements Writable{
 	static public Class<?> getClass(TransDataType type)throws IOException
 	{
 		TYPE tmp = type.getT();
+		System.out.print(tmp.name());
 		if(tmp.equals(TYPE.TRANS_DOUBLE))
 		{
 			return Double.class;

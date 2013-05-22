@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapred.Counters.Counter;
@@ -19,6 +20,7 @@ import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Array.ZoneID;
 import TRANS.Client.ZoneClient;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.MR.Average.StrideAverageResult;
 import TRANS.MR.Median.StripeMedianResult;
@@ -129,7 +131,7 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 	protected void cleanup(org.apache.hadoop.mapreduce.Reducer.Context context)
 			throws IOException, InterruptedException {
 		
-		TRANSDataIterator itr = new TRANSDataIterator(this.result,localChunk.getStart(),localChunk.getChunkSize());
+		TRANSDataIterator itr = new TRANSDataIterator(new TransDataType(this.result.getClass()),this.result,localChunk.getStart(),localChunk.getChunkSize());
 		co.increment(this.result.length * 8);
 		Partition p = new Partition(new ZoneID(zid), new ArrayID(arrayid),
 				new PID(localChunk.getChunkNum()), new RID(rnum - 1));
@@ -143,9 +145,11 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Host h;
+		Host h ;
 		try {
+			BooleanWritable w = client.getCi().CreatePartition(p);
 			h = client.getCi().getReplicateHost(p, p.getRid());
+			
 		} catch (WrongArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -77,7 +77,7 @@ public class PartitialCreateTest {
 		do
 		{
 			Object [] data = scanner.readChunkData(chunk, "data");
-			TRANSDataIterator itr = new TRANSDataIterator(data,chunk.getStart(),chunk.getChunkSize());
+			TRANSDataIterator itr = new TRANSDataIterator(new TransDataType(data[0].getClass()),data,chunk.getStart(),chunk.getChunkSize());
 			Partition p = new Partition(zone.getId(),array.getId(),
 					new PID(chunk.getChunkNum()), new RID(strategy.size() - 2));
 			Host h = ci.getReplicateHost(p, p.getRid());

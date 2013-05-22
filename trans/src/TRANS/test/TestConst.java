@@ -5,8 +5,8 @@ import java.util.Random;
 public class TestConst {
 	static int arrays = 0;
 
-	static public String testZoneName="sci2";
-	static public String testArrayName="c2f";
+	static public String testZoneName="out";
+	static public String testArrayName="18";
 	static public int [] srcStart={0,0,0,0};
 	static public int [] vsize={8,8,8,8};
 	static public int [] psize={8,8,8,8};

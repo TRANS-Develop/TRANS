@@ -22,6 +22,7 @@ import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Array.ZoneID;
 import TRANS.Client.ZoneClient;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.MR.Median.StrideResult;
 import TRANS.MR.Median.StripeMedianResult;
@@ -125,7 +126,8 @@ public class MedianReducer extends 	Reducer<IntWritable, StripeMedianResult, Int
 	protected void cleanup(org.apache.hadoop.mapreduce.Reducer.Context context)
 			throws IOException, InterruptedException {
 		
-		TRANSDataIterator itr = new TRANSDataIterator(this.result,localChunk.getStart(),localChunk.getChunkSize());
+		TRANSDataIterator itr = new TRANSDataIterator(new TransDataType(this.result[0].getClass()),
+				this.result,localChunk.getStart(),localChunk.getChunkSize());
 		
 		Partition p = new Partition(new ZoneID(zid), new ArrayID(arrayid),
 				new PID(localChunk.getChunkNum()), new RID(rnum - 1));
@@ -141,6 +143,7 @@ public class MedianReducer extends 	Reducer<IntWritable, StripeMedianResult, Int
 		}
 		Host h = null;
 		try {
+			client.getCi().CreatePartition(p);
 			h = client.getCi().getReplicateHost(p, p.getRid());
 		} catch (WrongArgumentException e1) {
 			// TODO Auto-generated catch block
@@ -150,10 +153,12 @@ public class MedianReducer extends 	Reducer<IntWritable, StripeMedianResult, Int
 		OptimusDataProtocol dp = h.getDataProtocol();
 		try{
 		if(!dp.putPartitionData(p, itr).get())
+			{
+				throw new IOException("Ouput Result to TRANS FAILURE@return false of putpartition");
+			}
+		}catch(Exception e)
 		{
-			throw new IOException("Ouput Result to TRANS FAILURE");
-		}}catch(Exception e)
-		{
+			e.printStackTrace();
 			throw new IOException("Ouput Result to TRANS FAILURE");
 		}
 		

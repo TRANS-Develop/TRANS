@@ -25,7 +25,7 @@ public class ReaderTest {
 		String zoneName = TestConst.testZoneName;
 		String arrayName = TestConst.testArrayName;
 		int [] start = {0,0,0,0};
-		int [] off = {8,8,8,8};
+		int [] off = {4,4,4,4};
 		ZoneClient zclient = new ZoneClient(conf);
 		OptimusZone zone = zclient.openZone(zoneName);
 		System.out.println(zone.getId());

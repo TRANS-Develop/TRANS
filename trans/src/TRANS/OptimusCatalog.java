@@ -472,7 +472,7 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 		}
 		if( (strategy.getShapes().size() - 1) > this.liveNodes.size())
 		{
-			throw new WrongArgumentException("zone replica number", "Not enough nodes to create replicas");
+			throw new WrongArgumentException("zone replica number", "Not enough nodes to create replicas"+(strategy.getShapes().size() - 1)+":"+this.liveNodes.size());
 		}
 		id = new ZoneID(this.getNextZoneID());
 		System.out.println("Creating Zone" + id);

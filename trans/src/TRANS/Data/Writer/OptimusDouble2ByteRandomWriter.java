@@ -23,7 +23,7 @@ public class OptimusDouble2ByteRandomWriter implements ByteWriter {
 	}
 	public void write(Object w) throws IOException
 	{
-		this.writeDouble((double)w);
+		this.writeDouble((Double)w);
 	}
 	public void write(Object []w) throws IOException
 	{

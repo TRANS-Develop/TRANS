@@ -1,8 +1,10 @@
 package TRANS.Array;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import TRANS.Data.TransDataType;
 import TRANS.util.TRANSDataIterator;
 
 public class PartitialCreateResult extends TRANSDataIterator {
@@ -19,9 +21,9 @@ public class PartitialCreateResult extends TRANSDataIterator {
 
 	Set<PresultKey> dealtKeys = new HashSet<PresultKey>();
 
-	public PartitialCreateResult(Object[] ds, int[] start, int[] chunkSize) {
+	public PartitialCreateResult(TransDataType type,Object[] ds, int[] start, int[] chunkSize) throws IOException {
 		// TODO Auto-generated constructor stub
-		super(ds,start,chunkSize);
+		super(type,ds,start,chunkSize);
 	}
 
 	public boolean AddResult(TRANSDataIterator itr) {

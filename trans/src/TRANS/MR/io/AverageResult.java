@@ -48,9 +48,9 @@ private double _currentValue;
 	  this._currentValue += d;
 	  this._valuesCombinedCount++;
   }
-  public void addAll(Object []values)
+  public void addAll(Object []values)throws IOException
   {
-	  Class<?> type = values.getClass();
+	  Class<?> type = values[0].getClass();
 	  if(type.equals(Double.class))
 	  {
 		  for(int i = 0; i < values.length; i++)
@@ -69,7 +69,8 @@ private double _currentValue;
 			  this.addValue((Integer)values[i]);
 		  }
 	  }else{
-		  System.out.println("Unsupported type");
+		  System.out.println("Unsupported type @averageresult"+type.getName());
+		  throw new IOException("Unsupported type @averageresult");
 	  }
   }
   public void addResult(AverageResult r)

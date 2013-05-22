@@ -46,7 +46,7 @@ public class StripeMedianResult<T extends Comparable<T>> implements Writable {
 	Set<OptimusResultKey> keys = new HashSet<OptimusResultKey>();
 	private TransDataType type = new TransDataType();
 	private int volume = 1;
-	private Object result = null;
+	private T result = null;
 	private boolean full = false;
 	private int []start = null;
 	private int []stride = null;
@@ -98,7 +98,7 @@ public class StripeMedianResult<T extends Comparable<T>> implements Writable {
 		for(int i=0;i<d.length;i++)
 			data.add(d[i]);
 	}
-	public void add(StripeMedianResult r)
+	public void add(StripeMedianResult<T> r)
 	{
 		Vector<T> data = (Vector<T>)r.getData();
 		if(data != null)
@@ -139,7 +139,8 @@ public class StripeMedianResult<T extends Comparable<T>> implements Writable {
 			{
 				new IntWritable((Integer)tmp).write(out);
 			}else{
-				System.out.println("Unsupported type");
+				System.out.println("Unsupported type@median result write");
+				throw new IOException("Unsupported type@median result write");
 			}
 			
 		}else{
@@ -181,10 +182,11 @@ public class StripeMedianResult<T extends Comparable<T>> implements Writable {
 
 	public T getResult()
 	{
-		if(this.isFull()&&this.data == null)
+		if(this.isFull()&&this.data.size() == 0)
 		{
 			return (T)this.result;
 		}else{
+			System.out.println(Arrays.toString(this.data.toArray()));
 			Collections.sort(this.data);
 			this.result = this.data.get(this.data.size()/2);
 			this.data = null;
@@ -205,26 +207,27 @@ public class StripeMedianResult<T extends Comparable<T>> implements Writable {
 		this.full =b.get();
 		if(this.full)
 		{
-			;
 			Class<?>t = TransDataType.getClass(this.type);
 			if(t.equals(Double.class))
 			{
 				DoubleWritable d = new DoubleWritable();
 				d.readFields(in);
-				this.result = d.get();
+				this.result = (T)new Double(d.get());
 			}else if(t.equals(Float.class))
 			{
 				FloatWritable d = new FloatWritable();
 				d.readFields(in);
-				this.result = d.get();
+				this.result = (T) new Float(d.get());
 			}else if(t.equals(Integer.class))
 			{
 				IntWritable d = new IntWritable();
 				d.readFields(in);
-				this.result = d.get();
+				this.result = (T) new Integer( d.get());
 			}else{
-				System.out.println("Unsupported type");
+				System.out.println("Unsupported type@median result reaad");
+				throw new IOException("Unsupported type@median result reaad");
 			}
+			
 		}else{
 		//	System.out.println(this.volume+":" + len);
 			this.volume = WritableUtils.readVInt(in);

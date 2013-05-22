@@ -14,7 +14,7 @@ import TRANS.Exceptions.WrongArgumentException;
  * @author foryee
  *
  */
-public class OptimusData implements Writable {
+public class OptimusData  extends TransDataWritable  {
 	
 	public TransDataType getType() {
 		return type;
@@ -23,11 +23,11 @@ public class OptimusData implements Writable {
 		this.type = type;
 	}
 
-	private TransDataType type = new TransDataType();
+	//private TransDataType type = new TransDataType();
 	private OptimusShape start;
 	private OptimusShape off;
 	private OptimusShape shape;
-	Object [] data = null;
+	//Object [] data = null;
 	
 	public OptimusData(){}
 	public OptimusData(Object []data,OptimusShape start, OptimusShape off,OptimusShape shape) throws IOException
@@ -57,83 +57,14 @@ public class OptimusData implements Writable {
 		this.off = off;
 	}
 	
-	private void writeDouble(DataOutput out) throws IOException 
-	{
-		//Double []ddata = (Double [])this.data;
-		for(int i = 0 ; i < this.data.length; i++)
-		{
-			//out.writeFloat(this.data[i]);
-			out.writeDouble((Double)data[i]);
-		}
-	}
-	private void readDouble(DataInput in)throws IOException
-	{
-		for(int i = 0 ; i < this.data.length; i++)
-		{
-			this.data[i] = in.readDouble();
-		}
-	}
-	private void writeFloat(DataOutput out) throws IOException 
-	{
-		//Float []ddata = (Float [])this.data;
-		for(int i = 0 ; i < this.data.length; i++)
-		{
-			out.writeFloat((Float)data[i]);
-		}
-	}
-	private void readFloat(DataInput in)throws IOException
-	{
-		for(int i = 0 ; i < this.data.length; i++)
-		{
-			this.data[i] = in.readFloat();
-		}
-	}
-	private void writeInteger(DataOutput out) throws IOException 
-	{
-		//Integer []ddata = (Integer [])this.data;
-		for(int i = 0 ; i < this.data.length; i++)
-		{
-			out.writeInt((Integer)data[i]);
-		}
-	}
-	private void readInteger(DataInput in)throws IOException
-	{
-		for(int i = 0 ; i < this.data.length; i++)
-		{
-			this.data[i] = in.readInt();
-		}
-	}
+
 	@Override
 	public void write(DataOutput out) throws IOException {
 		// TODO Auto-generated method stub
-		
-		this.type.write(out);
-		if(this.data == null)
-		{
-			out.writeInt(0);
-			return;
-		}
-		out.writeInt(this.data.length);
-		Class<?> dc = TransDataType.getClass(type);
-		if(dc.equals(Double.class))
-		{
-			this.writeDouble(out);
-		}else if(dc.equals(Float.class))
-		{
-			this.writeFloat(out);
-		}else if(dc.equals(Integer.class))
-		{
-			this.writeInteger(out);
-		}else{
-			System.out.println("Unknown Data Type");
-			throw new IOException("Unknown Data Type");
-		}
-	/*	for(int i = 0 ; i < this.data.length; i++)
-		{
-			//out.writeFloat(this.data[i]);
-			out.writeDouble(this.data[i]);
-		}
-	*/
+		super.write(out);
+		this.start.write(out);
+		this.off.write(out);
+		this.shape.write(out);
 			
 	}
 	public Object[] getData() {
@@ -145,22 +76,15 @@ public class OptimusData implements Writable {
 	@Override
 	public void readFields(DataInput in) throws IOException {
 		// TODO Auto-generated method stub
-		this.type.readFields(in);
-		int l = in.readInt();
-		this.data = new Object[l];
-		Class<?> dc = TransDataType.getClass(type);
-		if(dc.equals(Double.class))
-		{
-			this.readDouble(in);
-		}else if(dc.equals(Float.class))
-		{
-			this.readFloat(in);
-		}else if(dc.equals(Integer.class))
-		{
-			this.readInteger(in);
-		}else{
-			throw new IOException("Unknown Data Type");
-		}
+		super.readFields(in);
+		this.start = new OptimusShape();
+		this.start.readFields(in);
+		
+		this.off = new OptimusShape();
+		this.off.readFields(in);
+		
+		this.shape = new OptimusShape();
+		this.shape.readFields(in);
 	}
 	
 	/**

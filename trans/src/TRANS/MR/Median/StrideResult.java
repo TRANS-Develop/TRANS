@@ -13,6 +13,7 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
 
 import TRANS.Array.OptimusShape;
+import TRANS.Data.TransDataType;
 import TRANS.MR.OptimusResultKey;
 import TRANS.util.TRANSDataIterator;
 
@@ -38,9 +39,9 @@ public class StrideResult extends TRANSDataIterator {
 		this.id = id;
 	}
 	public StrideResult(){};
-	public StrideResult(Object []data, int []start, int []shape)
+	public StrideResult(TransDataType type,Object []data, int []start, int []shape) throws IOException
 	{
-		super(data,start,shape);
+		super(type,data,start,shape);
 	}
 	
 	Set<OptimusResultKey> contains = new HashSet<OptimusResultKey>();

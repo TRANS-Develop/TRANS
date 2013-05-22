@@ -11,10 +11,15 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
 
 import TRANS.Array.OptimusShape;
+import TRANS.Data.TransDataType;
+import TRANS.Data.TransDataWritable;
 import TRANS.Data.Reader.Byte2DoubleReader;
+import TRANS.Data.Reader.TransByteReaderFactory;
 import TRANS.Data.Writer.OptimusDouble2ByteStreamWriter;
+import TRANS.Data.Writer.TransWriterFactory;
+import TRANS.Data.Writer.Interface.ByteWriter;
 
-public class TRANSDataIterator implements Writable{
+public class TRANSDataIterator extends TransDataWritable{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -65,7 +70,7 @@ public class TRANSDataIterator implements Writable{
 	}
 
 	//data to read
-	Object []data = null;
+	//Object []data = null;
 	//the description of the data
 	int [] start = null;
 	@Override
@@ -81,7 +86,6 @@ public class TRANSDataIterator implements Writable{
 	//the description of read operation
 	int [] rstart = null;
 	int [] roff = null;
-
 	int size = 0;
 	int volume = 0;
 	int[] fjump = null;
@@ -89,7 +93,7 @@ public class TRANSDataIterator implements Writable{
 	private int[] itr;
 	public TRANSDataIterator(){}
 	
-	public TRANSDataIterator(Object []data, int []start, int []shape)
+	public TRANSDataIterator(TransDataType type,Object []data, int []start, int []shape)throws IOException
 	{
 		this.data = data;
 		this.shape = shape;
@@ -97,6 +101,7 @@ public class TRANSDataIterator implements Writable{
 		volume = 1;
 		for(int i = 0 ; i < shape.length; i++)
 			volume *= shape[i];
+		this.type = type;
 	}
 	public boolean init(int[] s, int[] o)
 	{
@@ -167,13 +172,11 @@ public class TRANSDataIterator implements Writable{
 	@Override
 	public void write(DataOutput out) throws IOException {
 		// TODO Auto-generated method stub
-	
+		
+		super.write(out);
 		new OptimusShape(this.start).write(out);
 		new OptimusShape(this.shape).write(out);
-		OptimusDouble2ByteStreamWriter writer = 
-				new OptimusDouble2ByteStreamWriter(this.data.length * 8,out);
-		writer.write(this.data);
-		writer.close();
+	
 		WritableUtils.writeVInt(out, this.size);
 		WritableUtils.writeVInt(out, this.volume);
 		
@@ -182,31 +185,21 @@ public class TRANSDataIterator implements Writable{
 	public void readFields(DataInput in) throws IOException {
 		// TODO Auto-generated method stub
 		
+		super.readFields(in);
 		
-		OptimusShape s = new OptimusShape();
-		s.readFields(in);
-		this.start = s.getShape();
-		s.readFields(in);
-		this.shape = s.getShape();
+		OptimusShape ss = new OptimusShape();
+		ss.readFields(in);
+		this.start = ss.getShape();
+		OptimusShape shape = new OptimusShape();
+		shape.readFields(in);
+		this.shape = shape.getShape();
 		
-		Byte2DoubleReader reader = new Byte2DoubleReader();
-		
-		
-		
-		int len = 1, l = shape.length;
-		for( int i = 0; i < l; i++)
-		{
-			len *= shape[i];
-		}
-		byte[] bdata = new byte[len*8];  
-		in.readFully(bdata);
-		reader.setData(bdata);
-		this.data = (Object [])reader.readData();
+
 		this.size = WritableUtils.readVInt(in);
 		this.volume = WritableUtils.readVInt(in);
 	}
 	
-	public static void main(String []args)
+	public static void main(String []args) throws IOException
 	{
 		Double []data = new Double[9*5*4];
 		for(int i=0; i < data.length;i++)
@@ -218,8 +211,8 @@ public class TRANSDataIterator implements Writable{
 		int [] rstart={0,0,0};
 		int [] roff={9,5,4};
 		Double []rdata = new Double[9*5*4];
-		TRANSDataIterator ritr = new TRANSDataIterator(data,start,shape);
-		TRANSDataIterator citr = new TRANSDataIterator(rdata,rstart,roff);
+		TRANSDataIterator ritr = new TRANSDataIterator(new TransDataType(Double.class),data,start,shape);
+		TRANSDataIterator citr = new TRANSDataIterator(new TransDataType(Double.class),rdata,rstart,roff);
 		
 		ritr.init(rstart, roff);
 		citr.init(start, shape);

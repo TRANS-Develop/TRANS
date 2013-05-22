@@ -23,6 +23,7 @@ import TRANS.Array.ZoneID;
 import TRANS.Client.ZoneClient;
 import TRANS.Client.Reader.PartitionReader;
 import TRANS.Data.OptimusData;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.MR.Binary.TransBinaryInputSplit;
 import TRANS.MR.Binary.TransBinaryMapInputValue;
@@ -154,7 +155,7 @@ public class TransBinaryMapper
 		int []off = split.getRoff();
 		int []rstart = split.getRstart();
 		
-		TRANSDataIterator itr1 = new TRANSDataIterator(data1,rstart,split.getRoff());
+		TRANSDataIterator itr1 = new TRANSDataIterator(new TransDataType(data1[0].getClass()),data1,rstart,split.getRoff());
 		ZoneID zid = zone3.getId();
 		ArrayID aid = new ArrayID(split.getAid3());
 		RID rid = new RID(zone3.getStrategy().getShapes().size() - 2);
@@ -176,7 +177,7 @@ public class TransBinaryMapper
 			}
 			
 			Object []tmp = new Object[len];	
-			TRANSDataIterator itr = new TRANSDataIterator(tmp,nstart,noff);
+			TRANSDataIterator itr = new TRANSDataIterator(new TransDataType(data1[0].getClass()),tmp,nstart,noff);
 			
 			
 			if(!itr.init(itr1.getStart(), itr1.getShape()))
