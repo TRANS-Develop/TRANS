@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.WritableUtils;
 
+import TRANS.Data.TransDataType;
 import TRANS.MR.io.AverageResult;
 
 public class StrideAverageResult extends AverageResult {
@@ -79,7 +80,7 @@ public class StrideAverageResult extends AverageResult {
 		return isIntersect;
 	}
 	public StrideAverageResult(){}
-	public StrideAverageResult(int id,int []start, int []stride)
+	public StrideAverageResult(Class<?>type,int id,int []start, int []stride) throws IOException
 	{
 		this.id = id;
 		for(int i=0; i < stride.length; i++)
@@ -88,6 +89,7 @@ public class StrideAverageResult extends AverageResult {
 		}
 		this.start = start;
 		this.stride = stride;
+		super.type = new TransDataType(type);
 	}
 	
 	

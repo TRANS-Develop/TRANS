@@ -33,7 +33,7 @@ public class TransDataType implements Writable{
 			this.t = TYPE.TRANS_FLOAT;
 		}else{
 			System.out.print("Unknown Type"+type.toString());
-			throw new IOException("Unknown Type"+type.toString());
+			throw new IOException("Unknown Type "+type.toString());
 		}
 	}
 	@Override

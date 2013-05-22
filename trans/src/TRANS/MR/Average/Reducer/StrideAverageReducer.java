@@ -35,7 +35,7 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 	private int []parshape = null;
 	private int []rangeOff = null;
 	private int []resultShape = null;
-	private Double []result = null;
+	private Object []result = null;
 	private int cur = 0;
 	
 	private String confDir=null;
@@ -44,6 +44,7 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 	private int zid = 0;
 	private int arrayid = 0;
 	private int rnum = 0;
+	Class<?> eleType = null;
 	private Counter co = null;
 	@Override
 	protected void setup(Context context) throws IOException,
@@ -104,26 +105,34 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 			localChunk.getChunkByOff(key.get());
 			int[] s = localChunk.getChunkSize();
 			System.out.println(localChunk);
-			System.out.println(Arrays.toString(s));
+			//System.out.println(Arrays.toString(s));
 			int len = 1;
 			for(int i = 0; i < s.length ; i++)
 			{
 				len *= s[i];
 			}
-			this.result = new Double[len];
+			this.result = new Object[len];
 		}
 		Iterator<StrideAverageResult> it = values.iterator();
 		StrideAverageResult result = it.next();
-		if(result.isFull())
+		if(!result.isFull())
 		{
-			this.result[this.cur++] = result.getResult();
-			//context.write(key, new DoubleWritable(result.getResult()));
-		}else{
 			while(it.hasNext())
 			{
 				result.addResult(it.next());
 			}
 			this.result[this.cur++] = result.getResult();
+		}
+		eleType = TransDataType.getClass(result.getType());
+		if(eleType == Double.class || eleType == Integer.class)
+		{
+			this.result[this.cur++] = new Double(result.getResult());
+		}else if(eleType == Float.class)
+		{
+			this.result[this.cur++] = new Float(result.getResult());
+		}else{
+			System.out.println("Unsupported type@strideaveragereducer "+this.getClass().getName());
+			throw new IOException("Unsupported type@strideaveragereducer "+this.getClass().getName());
 		}
 	}
 
@@ -131,8 +140,8 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 	protected void cleanup(org.apache.hadoop.mapreduce.Reducer.Context context)
 			throws IOException, InterruptedException {
 		
-		TRANSDataIterator itr = new TRANSDataIterator(new TransDataType(this.result.getClass()),this.result,localChunk.getStart(),localChunk.getChunkSize());
-		co.increment(this.result.length * 8);
+		TRANSDataIterator itr = new TRANSDataIterator(new TransDataType(eleType),this.result,localChunk.getStart(),localChunk.getChunkSize());
+		co.increment(this.result.length * new TransDataType(this.eleType).getElementSize());
 		Partition p = new Partition(new ZoneID(zid), new ArrayID(arrayid),
 				new PID(localChunk.getChunkNum()), new RID(rnum - 1));
 		ZoneClient client = null;
@@ -157,7 +166,7 @@ public class StrideAverageReducer extends 	Reducer<IntWritable, StrideAverageRes
 		}
 		
 		OptimusDataProtocol dp = h.getDataProtocol();
-		System.out.println(Arrays.toString(itr.getData()));
+		//System.out.println(Arrays.toString(itr.getData()));
 		if(!dp.putPartitionData(p, itr).get())
 		{
 			throw new IOException("Ouput Result to TRANS FAILURE");

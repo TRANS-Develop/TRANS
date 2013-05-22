@@ -21,6 +21,7 @@ import TRANS.Array.DataChunk;
 import TRANS.Array.OptimusArray;
 import TRANS.Array.OptimusZone;
 import TRANS.Client.ZoneClient;
+import TRANS.Data.TransDataType;
 import TRANS.MR.Average.StrideAverageResult;
 import TRANS.MR.Median.StripeMedianResult;
 import TRANS.MR.Median.TRANSMedianInputFormat;
@@ -148,9 +149,20 @@ public class StrideAverage {
 		OptimusCatalogProtocol ci = zcreater.getCi();
 		OptimusZone inZone = ci.openZone(new Text(zoneName));
 		OptimusArray inArray = ci.openArray(inZone.getId(), new Text(arrayName));
-		
+		Class<?> type = TransDataType.getClass(inArray.getType());
+		TransDataType t = null;
+		if(type == Double.class || type == Integer.class)
+		{
+			t = new TransDataType(Double.class);
+		}else if(type == Float.class)
+		{
+			t = new TransDataType(Float.class);
+		}else{
+			System.out.println("UnSupported type: "+ type.getName());
+			System.exit(-1);
+		}
 		ArrayID array = ci.createArray(zone.getId(), new Text(outName),
-				new FloatWritable(0),inArray.getType());
+				new FloatWritable(0),t);
 		int []pshape = zone.getPstep().getShape();
 		String p = "";
 		p+=pshape[0];

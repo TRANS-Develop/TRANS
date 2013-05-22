@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
 
+import TRANS.Data.TransDataType;
 import TRANS.MR.Median.StripeMedianResult;
 
 public class AverageResultArrayWritable implements Writable {

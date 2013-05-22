@@ -7,8 +7,11 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableUtils;
+
+import TRANS.Data.TransDataType;
 
 /**
  * This class represents the results of an average operation.
@@ -16,22 +19,31 @@ import org.apache.hadoop.io.WritableUtils;
  * for accurrate aggregation of partial results into the final result.
  */
 public class AverageResult implements Writable { 
-  @Override
+  public TransDataType getType() {
+		return type;
+	}
+	public void setType(TransDataType type) {
+		this.type = type;
+	}
+@Override
 	public String toString() {
 		return "AverageResult [_currentValue=" + _currentValue
 				+ ", _valuesCombinedCount=" + _valuesCombinedCount + "]";
 	}
 
-private double _currentValue;
+  private double _currentValue;
+  protected TransDataType type = new TransDataType();
   private int _valuesCombinedCount;
 
   private static final Log LOG = LogFactory.getLog(AverageResult.class);
 
+  public AverageResult(){}
   /**
    * Constructor
    */
-  public AverageResult() {
+  public AverageResult(TransDataType type) {
 	  this._currentValue = 0.0;
+	  this.type = type;
 	  this._valuesCombinedCount = 0;
   }
   public void addValue(Float f)
@@ -81,7 +93,10 @@ private double _currentValue;
   public double getResult()
   {
 	  if(this._valuesCombinedCount != 0)
+	  {
+		
 		  return this._currentValue/this._valuesCombinedCount;
+	  }
 	  else return Double.MAX_VALUE;
   }
   
@@ -104,17 +119,43 @@ public void set_valuesCombinedCount(int _valuesCombinedCount) {
 @Override
 public void write(DataOutput out) throws IOException {
 	// TODO Auto-generated method stub
+	this.type.write(out);
 	WritableUtils.writeVInt(out, this._valuesCombinedCount);
-	new DoubleWritable(this._currentValue).write(out);
+	Class<?> eleType = TransDataType.getClass(this.type);
+	if(eleType == Double.class || eleType == Integer.class)
+	{
+		new DoubleWritable(this._currentValue).write(out);
+	}else if(eleType == Float.class)
+	{
+	//	float f =  this._currentValue;
+		new FloatWritable((float)this._currentValue).write(out);
+	}else{
+		System.out.println("UNSUPPORTED TYPE@AverageResult Write "+this.getClass().getName());
+		throw new IOException("UNSUPPORTED TYPE@AverageResult Write "+this.getClass().getName());
+	}
+	
 }
 
 @Override
 public void readFields(DataInput in) throws IOException {
 	// TODO Auto-generated method stub
+	this.type.readFields(in);
 	this._valuesCombinedCount = WritableUtils.readVInt(in);
-	DoubleWritable d = new DoubleWritable();
-	d.readFields(in);
-	this._currentValue = d.get();
+	Class<?> eleType = TransDataType.getClass(this.type);
+	if(eleType == Double.class || eleType == Integer.class)
+	{
+		DoubleWritable d = new DoubleWritable();
+		d.readFields(in);
+		this._currentValue = d.get();
+	}else if(eleType == Float.class)
+	{
+		FloatWritable f = new FloatWritable();
+		f.readFields(in);
+		this._currentValue = f.get();
+	}else{
+		System.out.println("UNSUPPORTED TYPE@AverageResult Read "+this.getClass().getName());
+		throw new IOException("UNSUPPORTED TYPE@AverageResult read "+this.getClass().getName());
+	}
 }
 public long getSize()
 {
