@@ -194,6 +194,7 @@ public class TransBinaryMapper
 				
 				Host ho = null;
 				try {
+					ci.CreatePartition(p);
 					ho = ci.getReplicateHost(p, rid);
 				} catch (WrongArgumentException e) {
 					// TODO Auto-generated catch block

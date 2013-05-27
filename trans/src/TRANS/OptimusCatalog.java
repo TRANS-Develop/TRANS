@@ -434,6 +434,9 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 			if (ph == null) {
 				ph = new ConcurrentHashMap<PID, Host[]>();
 				this.partitions.put(p.getArrayid(), ph);
+			}else{
+				//created partition
+				return new BooleanWritable(true);
 			}
 		}
 		int num = 0;

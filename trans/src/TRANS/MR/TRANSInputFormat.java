@@ -32,9 +32,6 @@ import TRANS.MR.*;
 
 public abstract class TRANSInputFormat<K,V> extends FileInputFormat<K, V>{
 
-	
-	
-
 	@Override
 	public List<InputSplit> getSplits(JobContext arg0) throws IOException {
 		
