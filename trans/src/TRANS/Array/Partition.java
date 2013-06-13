@@ -231,8 +231,6 @@ public class Partition implements Writable, Runnable {
 		DataChunk schunk = new DataChunk(psize.getShape(),
 				src.getShape());
 
-//		System.out.println(schunk.toString());
-//		System.out.println(dchunk.toString());
 		
 		int[] vsize = psize.getShape();
 		int len = 1;
@@ -254,9 +252,8 @@ public class Partition implements Writable, Runnable {
 			ByteReader reader = TransByteReaderFactory.getByteReader(TransDataType.getClass(array.getType()), 1*1024*1024, null, cin);
 			ByteWriter w = TransWriterFactory.getRandomWriter(TransDataType.getClass(array.getType()), 1024*1024, this.dataf, this);
 			
-			//Byte2DoubleReader reader = new Byte2DoubleReader(1*1024*1024,null,cin);
 			Object [] tdouble = null;
-			//ByteWriter  w = new OptimusDouble2ByteRandomWriter(1024*1024,this.dataf,this);
+			
 			
 			OptimusTranslator trans = new OptimusTranslator(len, schunk, dchunk,w);		
 			trans.start();
