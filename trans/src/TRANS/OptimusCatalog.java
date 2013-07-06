@@ -651,8 +651,8 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 				this.nodes.get(oid).update();
 				this.liveNodes.put(host.getInstanceId(), host);
 				host.setDead(false);
-				System.out.println(this.nodes.size());
-				System.out.println(this.liveNodes.size());
+			//	System.out.println(this.nodes.size());
+			//	System.out.println(this.liveNodes.size());
 			
 			}else{
 				System.out.println("System Conflict Host is refused!!"+host);
