@@ -13,6 +13,16 @@ public class TransDataType implements Writable{
 		TRANS_FLOAT,
 		NOT_DEFINED
 	}
+	public static String getTypeString(TransDataType type)
+	{
+		return type.t.name();
+	}
+	public static TransDataType getTypeFromString(String name)
+	{
+		TransDataType tmp =new TransDataType();
+		tmp.setT(TYPE.valueOf(name));
+		return tmp;
+	}
 	private TYPE t = TYPE.NOT_DEFINED; 
 	
 	public TYPE getT() {
@@ -75,4 +85,5 @@ public class TransDataType implements Writable{
 			throw new IOException("Unsupported Type");
 		}
 	}
+
 }

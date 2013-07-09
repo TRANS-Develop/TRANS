@@ -23,6 +23,7 @@ import TRANS.Array.PID;
 import TRANS.Array.Partition;
 import TRANS.Array.RID;
 import TRANS.Client.ZoneClient;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.MR.TRANSInputSplit;
 import TRANS.MR.Average.StrideAverageResult;
@@ -144,6 +145,7 @@ public class TransStrideAverageInputFormat extends FileInputFormat<IntWritable,S
 			
 			splits.add(split);
 		}
+		conf.set("TRANS.array.type", TransDataType.getTypeString(array.getType()));
 		return splits;
 	}
 

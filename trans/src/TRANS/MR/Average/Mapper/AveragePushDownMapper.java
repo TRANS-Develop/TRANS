@@ -29,7 +29,7 @@ public class AveragePushDownMapper extends Mapper<Object, AverageResult, LongWri
 		  public void map(Object key, AverageResult value, Context context)
 		                  throws IOException, InterruptedException {
 		     c.increment(value.getSize());
-		     
+		    
 		     context.write(new LongWritable(1), value);
 		   }
 		     

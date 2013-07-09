@@ -3,12 +3,14 @@ package TRANS.MR.Average.Mapper;
 import java.io.IOException;
 
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Counters.Counter;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Mapper.Context;
 
 import TRANS.Data.Optimus1Ddata;
 import TRANS.Data.OptimusData;
+import TRANS.Data.TransDataType;
 import TRANS.MR.io.AverageResult;
 
 /**
@@ -18,11 +20,15 @@ public class AverageMapper extends Mapper<Object, OptimusData, LongWritable, Ave
 	
   public static enum InvalidCell { INVALID_CELL_COUNT } ;
   private Counter c = null;
+  private TransDataType type = null;
   @Override
 protected void setup(Context context) throws IOException, InterruptedException {
 	// TODO Auto-generated method stub
 	  c = (Counter) context.getCounter("TRANS_READ", "MAPPER_READ");
-	super.setup(context);
+	  JobConf conf = (JobConf)context.getConfiguration();
+	  String typeString = conf.get("TRANS.array.type","NOT_DEFINED");
+	  this.type = TransDataType.getTypeFromString(typeString);
+	  super.setup(context);
 }
 
 /**
@@ -35,6 +41,7 @@ protected void setup(Context context) throws IOException, InterruptedException {
                   throws IOException, InterruptedException {
 	  
     AverageResult r = new AverageResult();
+    r.setType(this.type);
    	Object []data = value.getData();
     c.increment(data.length);
     r.addAll(data);

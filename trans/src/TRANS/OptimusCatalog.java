@@ -219,7 +219,7 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 	private ConcurrentMap<ArrayID, OptimusArray> arrays = new ConcurrentHashMap<ArrayID, OptimusArray>();
 
 	private OptimusConfiguration conf = null;
-	private ConcurrentHashMap<OptimusInstanceID, OptimusPartitionStatus> hostStatus = new ConcurrentHashMap<OptimusInstanceID, OptimusPartitionStatus>();
+	//private ConcurrentHashMap<OptimusInstanceID, OptimusPartitionStatus> hostStatus = new ConcurrentHashMap<OptimusInstanceID, OptimusPartitionStatus>();
 	private ConcurrentHashMap<OptimusInstanceID,HashSet<Partition>> hostPartitions= new ConcurrentHashMap<OptimusInstanceID,HashSet<Partition>>();
 	DataOutputStream metaOut = null; //
 
@@ -324,7 +324,7 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 				.entrySet()) {
 
 			ArrayCreateStatus acs = e.getValue();
-			if (acs.getLastUpdateStatus() - System.currentTimeMillis() > deadTime) {
+			if ( System.currentTimeMillis() - acs.getLastUpdateStatus()  > deadTime) {
 				deadArray.add(e.getKey());
 				this.inCreateArray.remove(e.getKey());
 				OptimusArray array = this.arrays.get(e.getKey());
@@ -810,13 +810,14 @@ public class OptimusCatalog extends Thread implements OptimusCatalogProtocol,
 
 	private void recover(Host host) throws IOException, WrongArgumentException {
 		System.out.println("Recovying " + host);
-		OptimusPartitionStatus status = this.hostStatus.get(host
+	/*	OptimusPartitionStatus status = this.hostStatus.get(host
 				.getInstanceId());
 		if (status == null)
 		{
 			System.out.println("No Partition for "+host);
 			return;
 		}
+		*/
 		Set<Partition> ps = this.hostPartitions.get(host.getInstanceId());
 		if(ps == null)
 		{

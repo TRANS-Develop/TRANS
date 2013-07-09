@@ -24,6 +24,7 @@ import TRANS.Array.RID;
 import TRANS.Client.ZoneClient;
 import TRANS.Data.Optimus1Ddata;
 import TRANS.Data.OptimusData;
+import TRANS.Data.TransDataType;
 import TRANS.Exceptions.WrongArgumentException;
 import TRANS.Protocol.OptimusCatalogProtocol;
 import TRANS.util.OptimusConfiguration;
@@ -126,8 +127,8 @@ public abstract class TRANSInputFormat<K,V> extends FileInputFormat<K, V>{
 			split.setHosts(l);
 			split.setPshape(new OptimusShape(c.getChunkSize()));
 			splits.add(split);
-			
 		}
+		conf.set("TRANS.array.type", TransDataType.getTypeString(array.getType()));
 		return splits;
 	}
 

@@ -321,11 +321,13 @@ public class OptimusDataManager extends Thread implements OptimusDataProtocol,
 	@Override
 	public AverageResult readAverage(ArrayID aid, PID pid, OptimusShape pshape,
 			OptimusShape starts, OptimusShape offs) throws IOException {
+		OptimusArray array = this.rmanger.getArray(aid);
 		OptimusData data = this.readData(aid, pid, pshape, starts, offs);
 		Object[] d = data.getData();
 		Double[] rdata = new Double[2];
 		rdata[0] = new Double(d.length);
 		AverageResult r = new AverageResult();
+		r.setType(array.getType());
 		r.addAll(d);
 		/*
 		 * for (int i = 0; i < d.length; i++) { r.addValue(d[i]); }
@@ -473,6 +475,7 @@ public class OptimusDataManager extends Thread implements OptimusDataProtocol,
 					System.out.println("UnSupported type@readStride");
 					throw new IOException("UnSupported type@readStride");
 				}
+				
 				itrs.put(c.getChunkNum(), itr);
 			}
 
@@ -685,7 +688,7 @@ public class OptimusDataManager extends Thread implements OptimusDataProtocol,
 		for (Map.Entry i : itrs.entrySet()) {
 			StrideAverageResult r = (StrideAverageResult) i.getValue();
 			r.setId((Integer) i.getKey());
-
+			r.setType(array.getType());
 			ret[s++] = r;
 
 		}
