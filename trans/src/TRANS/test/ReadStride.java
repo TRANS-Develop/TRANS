@@ -50,7 +50,7 @@ public class ReadStride {
 			Host h = ci.getReplicateHost(p, new RID(1));
 			OptimusDataProtocol dp = h.getDataProtocol();
 
-			MedianResultArrayWritable a = dp.readStride(p, new OptimusShape(
+			MedianResultArrayWritable a = dp.readStrideMedian(p, new OptimusShape(
 					TestConst.psize), new OptimusShape(rangeStart),
 					new OptimusShape(rangeOff), new OptimusShape(
 							TestConst.stride));

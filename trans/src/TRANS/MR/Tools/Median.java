@@ -24,7 +24,7 @@ import TRANS.Array.OptimusZone;
 import TRANS.Client.ZoneClient;
 import TRANS.MR.Average.Mapper.AverageMapper;
 import TRANS.MR.Average.Reducer.AverageReducer;
-import TRANS.MR.Combiner.AverageCombiner;
+import TRANS.MR.Average.combiner.AverageCombiner;
 import TRANS.MR.Median.StrideResult;
 import TRANS.MR.Median.StripeMedianResult;
 import TRANS.MR.Median.TRANSMedianInputFormat;

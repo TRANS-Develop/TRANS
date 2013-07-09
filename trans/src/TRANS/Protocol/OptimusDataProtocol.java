@@ -35,7 +35,7 @@ public interface OptimusDataProtocol extends VersionedProtocol {
 	 *rnum the identify of the replica
 	 * */
 	public BooleanWritable putPartitionData(Partition p, TRANSDataIterator data) throws IOException;
-	public MedianResultArrayWritable  readStride(Partition p, OptimusShape pshape,OptimusShape start, 
+	public MedianResultArrayWritable  readStrideMedian(Partition p, OptimusShape pshape,OptimusShape start, 
 			OptimusShape off,OptimusShape stride)throws IOException;
 	
 	public AverageResultArrayWritable readStrideAverage(Partition p,OptimusShape pshape, OptimusShape start,

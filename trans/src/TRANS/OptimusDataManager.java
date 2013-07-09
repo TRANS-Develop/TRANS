@@ -398,7 +398,7 @@ public class OptimusDataManager extends Thread implements OptimusDataProtocol,
 	}
 
 	@Override
-	public MedianResultArrayWritable readStride(Partition p,
+	public MedianResultArrayWritable readStrideMedian(Partition p,
 			OptimusShape pshape, OptimusShape start, OptimusShape off,
 			OptimusShape stride) throws IOException {
 

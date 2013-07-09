@@ -76,7 +76,7 @@ public class TRANSMedianRecordReader extends
 			Partition p = new Partition(split.getZone().getId(), array.getId(),
 					split.getPid(), new RID(r));
 			System.out.println(split);
-			MedianResultArrayWritable ret = dp.readStride(p, split.getPshape(),
+			MedianResultArrayWritable ret = dp.readStrideMedian(p, split.getPshape(),
 					split.getStart(), split.getOff(), split.getStride());
 			result = (StripeMedianResult[]) ret.getResult();
 		} catch (Exception e) {

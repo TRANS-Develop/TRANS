@@ -2,7 +2,8 @@ package TRANS.MR.Tools;
 
 import TRANS.MR.Average.Mapper.*;
 import TRANS.MR.Average.Reducer.*;
-import TRANS.MR.Combiner.AverageCombiner;
+import TRANS.MR.Average.combiner.AverageCombiner;
+
 import java.io.IOException;
 import java.util.StringTokenizer;
 

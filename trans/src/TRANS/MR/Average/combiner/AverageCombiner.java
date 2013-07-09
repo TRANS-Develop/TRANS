@@ -1,4 +1,4 @@
-package TRANS.MR.Combiner;
+package TRANS.MR.Average.combiner;
 
 import java.io.IOException;
 
@@ -25,8 +25,9 @@ public class AverageCombiner extends
 			Context context) throws InterruptedException, IOException {
 
 		AverageResult avgResult = new AverageResult();
-
+		
 		for (AverageResult value : values) {
+			avgResult.setType(value.getType());
 			avgResult.addResult(value);
 		}
 
